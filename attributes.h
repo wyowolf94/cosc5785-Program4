@@ -15,7 +15,6 @@
 #define LBRACE 6
 #define RBRACE 6
 #define DSLASH 6
-#define COMMA 6
 
 #define IF 9
 #define VOID 9

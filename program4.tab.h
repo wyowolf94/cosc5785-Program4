@@ -74,10 +74,11 @@ extern int yydebug;
     BANG = 284,
     SEMI = 285,
     EQ = 286,
-    RO = 287,
-    SO = 288,
-    PO = 289,
-    UO = 290
+    COMMA = 287,
+    RO = 288,
+    SO = 289,
+    PO = 290,
+    UO = 291
   };
 #endif
 
@@ -91,7 +92,7 @@ union YYSTYPE
   Node *ttype;
   struct attributes* atts;
 
-#line 95 "program4.tab.h" /* yacc.c:1909  */
+#line 96 "program4.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;

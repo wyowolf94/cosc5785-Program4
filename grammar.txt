@@ -38,6 +38,14 @@ Name : this
      | Name [Expression]
      ;
      
+explist : Expression 
+        | explist comma Expression
+        ;
+     
+ArgList : empty
+        | explist
+        ;
+     
 expstar : empty
         | expstar Expression
         ;
@@ -46,8 +54,8 @@ brackstar : empty
           | brackstar []
           ;
 
-NewExpression : new SimpleType ()
-              | new SimpleType <expstar> <brackstar>
+NewExpression : new identifier ( ArgList )
+              | new SimpleType expstar brackstar
               ;
               
 Expression : Name
@@ -62,9 +70,71 @@ Expression : Name
            | Expression ProductOp Expression
            | (Expression)
            ;
-              
-Statement : Name = Expression ;
 
-Element : VarDeclaration 
-        | Statement
+OptionalExpression : empty
+                   | Expression
+                   ;
+              
+LocalVarDeclaration : Type identifier semi ;
+
+locvardecstar : empty
+              | locvardecstar LocalVarDeclaration
+              ;
+              
+statestar : empty
+          | statestar Statement
+          ;
+
+Block : { locvardecstar statestar } ;
+
+ConditionalStatement : if ( Expression ) Statement
+                     | if ( Expression ) Statement else Statement
+                     ;
+              
+Statement : ;
+          | Name = Expression semi
+          | Name ( ArgList ) semi
+          | print ( ArgList ) semi
+          | Conditional Statement
+          | while ( Expression ) Statement 
+          | return OptionalExpression semi
+          | Block
+          ;
+
+Parameter : Type identifier ;
+
+paramlist : Parameter
+          | paramstar comma Parameter
+          ;
+          
+ParameterList : empty
+              | paramlist
+              ;
+              
+ResultType : Type
+           | void
+           ;
+
+MethodDeclaration : ResultType identifier ( ParameterList ) Block ;
+
+ConstructorDeclaration : identifier ( ParameterList ) Block;
+
+vardecstar : empty
+           | vardecstar VarDeclaration
+           ;
+           
+constdecstar : empty
+             | constdecstar ConstructorDeclaration
+             ;
+             
+methdecstar : empty
+            | methdecstar MethodDeclaration
+            ;
+
+ClassBody : { vardecstar constdecstar methdecstar } ;
+
+ClassDeclaration : class identifier ClassBody ;
+
+Program : ClassDeclaration
+        | Program ClassDeclaration
         ;

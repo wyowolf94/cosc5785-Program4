@@ -1120,6 +1120,7 @@ case 39:
 YY_RULE_SETUP
 #line 289 "program4.lpp"
 { 
+  yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
   coln += yyleng;
   return COMMA; 
@@ -1127,7 +1128,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 295 "program4.lpp"
+#line 296 "program4.lpp"
 { 
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1137,7 +1138,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 302 "program4.lpp"
+#line 303 "program4.lpp"
 { 
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1147,7 +1148,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 309 "program4.lpp"
+#line 310 "program4.lpp"
 { 
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1157,7 +1158,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 316 "program4.lpp"
+#line 317 "program4.lpp"
 { 
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1167,7 +1168,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 324 "program4.lpp"
+#line 325 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "ID", yytext);
@@ -1177,7 +1178,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 331 "program4.lpp"
+#line 332 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "NUMBER", yytext);
@@ -1187,7 +1188,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 338 "program4.lpp"
+#line 339 "program4.lpp"
 {
   //updateAtts(yylineno, coln, yyleng, "SPACE", "");
   coln+= yyleng;
@@ -1197,7 +1198,7 @@ YY_RULE_SETUP
 case 47:
 /* rule 47 can match eol */
 YY_RULE_SETUP
-#line 344 "program4.lpp"
+#line 345 "program4.lpp"
 {
   //updateAtts(yylineno, coln, yyleng, "NEWLINE", "");
   coln = 1;
@@ -1206,7 +1207,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 350 "program4.lpp"
+#line 351 "program4.lpp"
 {
   //updateAtts(yylineno, coln, yyleng, "WSPACE", "");
   coln+= yyleng;
@@ -1215,7 +1216,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 356 "program4.lpp"
+#line 357 "program4.lpp"
 {
   errn++;
   yyless(0);
@@ -1227,7 +1228,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 365 "program4.lpp"
+#line 366 "program4.lpp"
 {
   yymore();
   BEGIN(INNERERROR); 
@@ -1236,7 +1237,7 @@ YY_RULE_SETUP
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 370 "program4.lpp"
+#line 371 "program4.lpp"
 {
   yyless(yyleng-1);
   //updateAtts(yylineno, coln, yyleng, yytext, "WORD ERROR");
@@ -1248,7 +1249,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(WORDERROR):
-#line 380 "program4.lpp"
+#line 381 "program4.lpp"
 {
   yyless(yyleng-1);
   //updateAtts(yylineno, coln, yyleng, yytext, "WORD ERROR");
@@ -1261,14 +1262,14 @@ case YY_STATE_EOF(WORDERROR):
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 390 "program4.lpp"
+#line 391 "program4.lpp"
 {
   yymore(); 
 }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 394 "program4.lpp"
+#line 395 "program4.lpp"
 {
   yyless(yyleng-2);
   //updateAtts(yylineno, coln, yyleng, yytext, "WORD ERROR");
@@ -1282,7 +1283,7 @@ YY_RULE_SETUP
 case 54:
 /* rule 54 can match eol */
 YY_RULE_SETUP
-#line 404 "program4.lpp"
+#line 405 "program4.lpp"
 {
   yyless(yyleng-1);
   if(yyleng == 1) {
@@ -1301,7 +1302,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 420 "program4.lpp"
+#line 421 "program4.lpp"
 {
   yymore();
   BEGIN(WORDERROR); 
@@ -1309,10 +1310,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 425 "program4.lpp"
+#line 426 "program4.lpp"
 ECHO;
 	YY_BREAK
-#line 1316 "program4_lex.cpp"
+#line 1317 "program4_lex.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 case YY_STATE_EOF(INNERERROR):
@@ -2221,7 +2222,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 425 "program4.lpp"
+#line 426 "program4.lpp"
 
 
 

@@ -40,6 +40,7 @@ void yyerror(const char *);
 %type<ttype> elem 
 %type<ttype> simpleType type varDec
 %type<ttype> exp name newexp expstar brackstar
+%type<ttype> explist arglist
 %type<ttype> relop sumop proop unyop
 
 %token<atts> DOT THIS
@@ -51,7 +52,7 @@ void yyerror(const char *);
 %token<atts> PLUS MINUS OR
 %token<atts> MULT DIVD MOD AND
 %token<atts> BANG
-%token<atts> SEMI EQ
+%token<atts> SEMI EQ COMMA
 
 //%precedence EXP
 
@@ -92,42 +93,15 @@ statement : name EQ exp SEMI
                delete $2;
                yyerrok;}
            ; 
-     
-varDec : type IDEN SEMI  {$$ = new varDecNode($2->value);
-                          $$->addChild($1);
-                          delete $2;
-                          delete $3;}
-       | type IDEN error {cerr << "Missing ';' after identifier: line " << $2->lNum << endl << endl;
-                          $$ = new errorNode("<VarDeclaration>");
-                          $$->addChild($1);
-                          $$->setValid(false);
-                          delete $2;
-                          yyerrok;}
-       ;
-     
-type : simpleType 
-         {$$ = new typeNode("simpleType");
-          $$->addChild($1);}
-     | type DOUBBRACK 
-         {$$ = new typeNode("type");
-          $$->addChild($1);
-          delete $2;}
-     ;
-     
-simpleType : INT  {$$ = new simpleTypeNode($1->token, "");
-                   delete $1;} 
-           | IDEN {$$ = new simpleTypeNode("id", $1->value);
-                   delete $1;}
-           ;
 
 exp : name 
         {$$ = new expNode("name");
          $$->addChild($1);}
     | NUM
-        {$$ = new numNode($1->value);
+        {$$ = new expNode("num", $1->value);
          delete $1;}
     | NLL
-        {$$ = new nullNode();
+        {$$ = new expNode("null");
          delete $1;}
     | name LPAREN RPAREN
         {$$ = new expNode("name paren");
@@ -199,16 +173,17 @@ exp : name
          yyerrok;}
     ;  
     
-newexp : NEW simpleType LPAREN RPAREN 
-           {$$ = new newexpNode("parens");
-            $$->addChild($2);
+newexp : NEW IDEN LPAREN arglist RPAREN 
+           {$$ = new newexpNode("parens", $2->value);
+            $$->addChild($4);
             delete $1;
+            delete $2;
             delete $3;
-            delete $4;}
-       | NEW simpleType LPAREN error 
+            delete $5;}
+       | NEW IDEN LPAREN arglist error 
            {cerr << "Missing ')' after type: line " << $1->lNum << endl << endl;
             $$ = new errorNode("<NewExpression>");
-            $$->addChild($2);
+            $$->addChild($4);
             $$->setValid(false);
             delete $1;
             delete $3;
@@ -223,7 +198,15 @@ newexp : NEW simpleType LPAREN RPAREN
             $$->addChild($4);
             delete $1;}
        ;
-       
+           
+brackstar : %empty
+              {$$ = new brackstarNode("empty");}
+          | brackstar DOUBBRACK
+              {$$ = new brackstarNode("rec");
+               $$->addChild($1);
+               delete $2;}
+          ;
+          
 expstar : %empty
             {$$ = new expstarNode("empty");}
         | expstar LBRACK exp RBRACK 
@@ -243,15 +226,24 @@ expstar : %empty
              delete $2;
              yyerrok;}
         ;
-    
-brackstar : %empty
-              {$$ = new brackstarNode("empty");}
-          | brackstar DOUBBRACK
-              {$$ = new brackstarNode("rec");
-               $$->addChild($1);
-               delete $2;}
-          ;
-          
+        
+arglist : %empty
+            {$$ = new arglistNode("empty");}
+        | explist
+            {$$ = new arglistNode("rec");
+             $$->addChild($1);}
+        ;
+  
+explist : exp 
+            {$$ = new explistNode("exp");
+             $$->addChild($1);} 
+        | explist COMMA exp 
+            {$$ = new explistNode("rec");
+             $$->addChild($1);
+             $$->addChild($3);
+             delete $2;}
+        ;
+  
 name : THIS  
          {$$ = new nameNode("this", "");
           delete $1;}
@@ -278,6 +270,33 @@ name : THIS
           delete $2;
           yyerrok;}        
      ;
+     
+varDec : type IDEN SEMI  {$$ = new varDecNode($2->value);
+                          $$->addChild($1);
+                          delete $2;
+                          delete $3;}
+       | type IDEN error {cerr << "Missing ';' after identifier: line " << $2->lNum << endl << endl;
+                          $$ = new errorNode("<VarDeclaration>");
+                          $$->addChild($1);
+                          $$->setValid(false);
+                          delete $2;
+                          yyerrok;}
+       ;
+     
+type : simpleType 
+         {$$ = new typeNode("simpleType");
+          $$->addChild($1);}
+     | type DOUBBRACK 
+         {$$ = new typeNode("type");
+          $$->addChild($1);
+          delete $2;}
+     ;
+     
+simpleType : INT  {$$ = new simpleTypeNode($1->token, "");
+                   delete $1;} 
+           | IDEN {$$ = new simpleTypeNode("id", $1->value);
+                   delete $1;}
+           ;
 
 relop : DEQ   {$$ = new relopNode("==");
                delete $1;}
