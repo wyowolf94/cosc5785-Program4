@@ -876,6 +876,7 @@ case 14:
 YY_RULE_SETUP
 #line 120 "program4.lpp"
 {
+  yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
   coln+= yyleng;
   return RETURN; 
@@ -883,7 +884,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 126 "program4.lpp"
+#line 127 "program4.lpp"
 {
   updateAtts(yylineno, coln, yyleng, yytext, "");
   coln+= yyleng;
@@ -892,7 +893,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 132 "program4.lpp"
+#line 133 "program4.lpp"
 {
   updateAtts(yylineno, coln, yyleng, yytext, "");
   coln+= yyleng;
@@ -901,7 +902,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 138 "program4.lpp"
+#line 139 "program4.lpp"
 {
   updateAtts(yylineno, coln, yyleng, yytext, "");
   coln+= yyleng;
@@ -910,7 +911,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 144 "program4.lpp"
+#line 145 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -920,7 +921,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 151 "program4.lpp"
+#line 152 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "R-OP", yytext);
@@ -930,7 +931,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 158 "program4.lpp"
+#line 159 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "R-OP", yytext);
@@ -940,7 +941,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 165 "program4.lpp"
+#line 166 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "R-OP", yytext);
@@ -950,7 +951,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 172 "program4.lpp"
+#line 173 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "R-OP", yytext);
@@ -960,7 +961,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 179 "program4.lpp"
+#line 180 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "R-OP", yytext);
@@ -970,7 +971,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 186 "program4.lpp"
+#line 187 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "R-OP", yytext);
@@ -980,7 +981,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 193 "program4.lpp"
+#line 194 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "S-OP", yytext);
@@ -990,7 +991,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 200 "program4.lpp"
+#line 201 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "S-OP", yytext);
@@ -1000,7 +1001,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 207 "program4.lpp"
+#line 208 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "S-OP", yytext);
@@ -1010,7 +1011,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 214 "program4.lpp"
+#line 215 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "P-OP", yytext);
@@ -1020,7 +1021,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 221 "program4.lpp"
+#line 222 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "P-OP", yytext);
@@ -1030,7 +1031,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 228 "program4.lpp"
+#line 229 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "P-OP", yytext);
@@ -1040,7 +1041,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 235 "program4.lpp"
+#line 236 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "P-OP", yytext);
@@ -1050,7 +1051,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 242 "program4.lpp"
+#line 243 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "U-OP", yytext);
@@ -1060,7 +1061,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 249 "program4.lpp"
+#line 250 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1070,7 +1071,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 256 "program4.lpp"
+#line 257 "program4.lpp"
 { 
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1080,7 +1081,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 263 "program4.lpp"
+#line 264 "program4.lpp"
 { 
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1090,8 +1091,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 270 "program4.lpp"
+#line 271 "program4.lpp"
 { 
+  yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
   coln += yyleng;
   return LBRACE; 
@@ -1099,8 +1101,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 276 "program4.lpp"
+#line 278 "program4.lpp"
 { 
+  yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
   coln += yyleng;
   return RBRACE; 
@@ -1108,7 +1111,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 282 "program4.lpp"
+#line 285 "program4.lpp"
 { 
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1118,7 +1121,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 289 "program4.lpp"
+#line 292 "program4.lpp"
 { 
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1128,7 +1131,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 296 "program4.lpp"
+#line 299 "program4.lpp"
 { 
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1138,7 +1141,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 303 "program4.lpp"
+#line 306 "program4.lpp"
 { 
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1148,7 +1151,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 310 "program4.lpp"
+#line 313 "program4.lpp"
 { 
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1158,7 +1161,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 317 "program4.lpp"
+#line 320 "program4.lpp"
 { 
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
@@ -1168,7 +1171,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 325 "program4.lpp"
+#line 328 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "ID", yytext);
@@ -1178,7 +1181,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 45:
 YY_RULE_SETUP
-#line 332 "program4.lpp"
+#line 335 "program4.lpp"
 {
   yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, "NUMBER", yytext);
@@ -1188,7 +1191,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 339 "program4.lpp"
+#line 342 "program4.lpp"
 {
   //updateAtts(yylineno, coln, yyleng, "SPACE", "");
   coln+= yyleng;
@@ -1198,7 +1201,7 @@ YY_RULE_SETUP
 case 47:
 /* rule 47 can match eol */
 YY_RULE_SETUP
-#line 345 "program4.lpp"
+#line 348 "program4.lpp"
 {
   //updateAtts(yylineno, coln, yyleng, "NEWLINE", "");
   coln = 1;
@@ -1207,7 +1210,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 351 "program4.lpp"
+#line 354 "program4.lpp"
 {
   //updateAtts(yylineno, coln, yyleng, "WSPACE", "");
   coln+= yyleng;
@@ -1216,7 +1219,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 357 "program4.lpp"
+#line 360 "program4.lpp"
 {
   errn++;
   yyless(0);
@@ -1228,7 +1231,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 366 "program4.lpp"
+#line 369 "program4.lpp"
 {
   yymore();
   BEGIN(INNERERROR); 
@@ -1237,7 +1240,7 @@ YY_RULE_SETUP
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 371 "program4.lpp"
+#line 374 "program4.lpp"
 {
   yyless(yyleng-1);
   //updateAtts(yylineno, coln, yyleng, yytext, "WORD ERROR");
@@ -1249,7 +1252,7 @@ YY_RULE_SETUP
 }
 	YY_BREAK
 case YY_STATE_EOF(WORDERROR):
-#line 381 "program4.lpp"
+#line 384 "program4.lpp"
 {
   yyless(yyleng-1);
   //updateAtts(yylineno, coln, yyleng, yytext, "WORD ERROR");
@@ -1262,14 +1265,14 @@ case YY_STATE_EOF(WORDERROR):
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 391 "program4.lpp"
+#line 394 "program4.lpp"
 {
   yymore(); 
 }
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 395 "program4.lpp"
+#line 398 "program4.lpp"
 {
   yyless(yyleng-2);
   //updateAtts(yylineno, coln, yyleng, yytext, "WORD ERROR");
@@ -1283,7 +1286,7 @@ YY_RULE_SETUP
 case 54:
 /* rule 54 can match eol */
 YY_RULE_SETUP
-#line 405 "program4.lpp"
+#line 408 "program4.lpp"
 {
   yyless(yyleng-1);
   if(yyleng == 1) {
@@ -1302,7 +1305,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 421 "program4.lpp"
+#line 424 "program4.lpp"
 {
   yymore();
   BEGIN(WORDERROR); 
@@ -1310,10 +1313,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 426 "program4.lpp"
+#line 429 "program4.lpp"
 ECHO;
 	YY_BREAK
-#line 1317 "program4_lex.cpp"
+#line 1320 "program4_lex.cpp"
 case YY_STATE_EOF(INITIAL):
 case YY_STATE_EOF(COMMENT):
 case YY_STATE_EOF(INNERERROR):
@@ -2222,7 +2225,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 426 "program4.lpp"
+#line 429 "program4.lpp"
 
 
 

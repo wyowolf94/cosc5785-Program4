@@ -141,18 +141,129 @@ class errorNode : public Node
 class statementNode : public Node 
 {
   public:
-    statementNode() : Node () {
-      type = "";
+    statementNode(string t) : Node () {
+      type = t;
     } 
 
     virtual void printNode(ostream * out = 0) {
-      cout << endl << "<Statement> -> <Name> = <Expression> semi" << endl;
-      children[0]->printNode();
-      children[1]->printNode();
+      if(type == "nameeq") {
+        cout << endl << "<Statement> -> <Name> = <Expression> ;" << endl;
+        children[0]->printNode();
+        children[1]->printNode();
+      } else if(type == "optexp") {
+        cout << endl << "<Statement> -> return <OptionalExpression> ;" << endl;
+        children[0]->printNode();
+      } else if (type == "block") {
+        cout << endl << "<Statement> -> <Block>" << endl;
+        children[0]->printNode();
+      } else {
+        cout << endl << "oh no good lord hey kids" << endl;
+      }
     }
   private:
     string type;
 };
+
+// Block Node goes to type identifier semicolon
+class blockNode : public Node 
+{
+  public:
+    blockNode() : Node () {
+      id = "";
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+       cout << "<Block> -> { <LocalVarDecStar> <StateStar> }" << endl;
+       children[0]->printNode();
+       children[1]->printNode();
+    }
+  private:
+    string id;
+};
+
+// statestar Node with just prints any number of statements
+class statestarNode : public Node 
+{
+  public:
+    statestarNode(string t) : Node () {
+      type = t;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      if(type == "empty") {
+        cout << "<StateStar> -> epsilon" << endl;
+      } else if(type == "rec") {
+        cout << "<StateStar> -> <StateStar> <Statement>" << endl;
+        children[0]->printNode();
+        children[1]->printNode();
+      } else {
+        cout << "it's going to be fine" << endl;
+      }
+    }
+  private:
+    string type;
+}; 
+
+// LocalVarDecStar Node with just prints any number of locvardecNodes
+class locvardecstarNode : public Node 
+{
+  public:
+    locvardecstarNode(string t) : Node () {
+      type = t;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      if(type == "empty") {
+        cout << "<LocalVarDecStar> -> epsilon" << endl;
+      } else if(type == "rec") {
+        cout << "<LocalVarDecStar> -> <LocalVarDecStar> <LocalVarDec>" << endl;
+        children[0]->printNode();
+        children[1]->printNode();
+      } else {
+        cout << "definitely going to get this done" << endl;
+      }
+    }
+  private:
+    string type;
+}; 
+
+// LocalVarDec Node with just prints type identifier;
+class locvardecNode : public Node 
+{
+  public:
+    locvardecNode(string i) : Node () {
+      id = i;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      cout << "<LocalVarDec> -> <Type> identifier (" << id << ") ;" << endl;
+      children[0]->printNode();
+    }
+  private:
+    string id;
+}; 
+
+// Optional Expression Node that goes to epsilon or exp
+class optexpNode : public Node 
+{
+  public:
+    optexpNode(string t) : Node () {
+      type = t;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      if(type == "empty") {
+        cout << "<OptionalExpression> -> epsilon" << endl;
+      } else if (type == "exp") {
+        cout << "<OptionalExpression> -> <Expression>" << endl;
+        children[0]->printNode();
+      } else {
+        cout << "so tired. need to finish this. " << endl;
+      }
+    }
+  private:
+    string type;
+}; 
 
 // Expression Op Node where t tells us what kind of expression it is
 class expNode : public Node 

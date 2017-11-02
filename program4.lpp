@@ -118,6 +118,7 @@ NOTERRTERM  [^ \n\t\[\]\{\}!&|=<>\+\-\*\/\%\;\,\(\)]
 }
 
 "return" {
+  yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
   coln+= yyleng;
   return RETURN; 
@@ -268,12 +269,14 @@ NOTERRTERM  [^ \n\t\[\]\{\}!&|=<>\+\-\*\/\%\;\,\(\)]
 }
 
 "{" { 
+  yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
   coln += yyleng;
   return LBRACE; 
 }
   
 "}" { 
+  yylval.atts = new struct attributes;
   updateAtts(yylineno, coln, yyleng, yytext, "");
   coln += yyleng;
   return RBRACE; 

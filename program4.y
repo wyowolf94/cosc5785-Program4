@@ -36,15 +36,17 @@ void yyerror(const char *);
 }
 // Bison Declarations
 
-%type<ttype> statement
+%type<ttype> statement optexp
 %type<ttype> elem 
-%type<ttype> simpleType type varDec
+%type<ttype> simpleType type varDec 
+%type<ttype> locvardec locvardecstar statestar block 
 %type<ttype> exp name newexp expstar brackstar
 %type<ttype> explist arglist
 %type<ttype> relop sumop proop unyop
 
 %token<atts> DOT THIS
-%token<atts> LBRACK RBRACK DOUBBRACK
+%token<atts> LBRACK RBRACK DOUBBRACK 
+%token<atts> LBRACE RBRACE
 %token<atts> INT IDEN 
 %token<atts> NUM NLL READ NEW LPAREN RPAREN
 
@@ -52,7 +54,7 @@ void yyerror(const char *);
 %token<atts> PLUS MINUS OR
 %token<atts> MULT DIVD MOD AND
 %token<atts> BANG
-%token<atts> SEMI EQ COMMA
+%token<atts> SEMI EQ COMMA RETURN
 
 //%precedence EXP
 
@@ -76,7 +78,7 @@ elem : statement {}
      ;
 
 statement : name EQ exp SEMI 
-              {$$ = new statementNode();
+              {$$ = new statementNode("nameeq");
                if(!$1->getValid() || !$3->getValid()) {
                  $$->setValid(false);
                }
@@ -92,8 +94,54 @@ statement : name EQ exp SEMI
                $$->addChild($3);
                delete $2;
                yyerrok;}
+           | RETURN optexp SEMI
+               {$$ = new statementNode("optexp");
+                $$->addChild($2);
+                delete $1;
+                delete $3;}
+           | block
+               {$$ = new statementNode("block");
+                $$->addChild($1);}
            ; 
+           
+block : LBRACE locvardecstar statestar RBRACE 
+          {$$ = new blockNode();
+           $$->addChild($2);
+           $$->addChild($3);
+           delete $1;
+           delete $4;}
+      ;
 
+statestar : %empty
+              {$$ = new statestarNode("empty");}
+          | statestar statement
+              {$$ = new statestarNode("rec");
+               $$->addChild($1);
+               $$->addChild($2);}
+          ;
+           
+locvardecstar : %empty
+                  {$$ = new locvardecstarNode("empty");}
+              | locvardecstar locvardec
+                  {$$ = new locvardecstarNode("rec");
+                   $$->addChild($1);
+                   $$->addChild($2);}
+              ;
+           
+locvardec : type IDEN SEMI 
+              {$$ = new locvardecNode($2->value);
+               $$->addChild($1);
+               delete $2;
+               delete $3;}
+          ;
+           
+optexp : %empty
+           {$$ = new optexpNode("empty");}
+       | exp
+           {$$ = new optexpNode("exp");
+            $$->addChild($1);}
+       ;
+           
 exp : name 
         {$$ = new expNode("name");
          $$->addChild($1);}

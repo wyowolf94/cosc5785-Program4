@@ -1,3 +1,6 @@
+State 15 conflicts: 1 shift/reduce
+
+
 Grammar
 
     0 $accept: start $end
@@ -10,155 +13,183 @@ Grammar
 
     5 statement: name EQ exp SEMI
     6          | name EQ exp error
+    7          | RETURN optexp SEMI
+    8          | block
 
-    7 exp: name
-    8    | NUM
-    9    | NLL
-   10    | name LPAREN RPAREN
-   11    | name LPAREN error
-   12    | READ LPAREN RPAREN
-   13    | READ LPAREN error
-   14    | READ error RPAREN
-   15    | newexp
-   16    | exp relop exp
-   17    | exp sumop exp
-   18    | exp proop exp
-   19    | unyop exp
-   20    | LPAREN exp RPAREN
-   21    | LPAREN exp error
+    9 block: LBRACE locvardecstar statestar RBRACE
 
-   22 newexp: NEW IDEN LPAREN arglist RPAREN
-   23       | NEW IDEN LPAREN arglist error
-   24       | NEW simpleType expstar brackstar
+   10 statestar: %empty
+   11          | statestar statement
 
-   25 brackstar: %empty
-   26          | brackstar DOUBBRACK
+   12 locvardecstar: %empty
+   13              | locvardecstar locvardec
 
-   27 expstar: %empty
-   28        | expstar LBRACK exp RBRACK
-   29        | expstar LBRACK exp error
+   14 locvardec: type IDEN SEMI
 
-   30 arglist: %empty
-   31        | explist
+   15 optexp: %empty
+   16       | exp
 
-   32 explist: exp
-   33        | explist COMMA exp
+   17 exp: name
+   18    | NUM
+   19    | NLL
+   20    | name LPAREN RPAREN
+   21    | name LPAREN error
+   22    | READ LPAREN RPAREN
+   23    | READ LPAREN error
+   24    | READ error RPAREN
+   25    | newexp
+   26    | exp relop exp
+   27    | exp sumop exp
+   28    | exp proop exp
+   29    | unyop exp
+   30    | LPAREN exp RPAREN
+   31    | LPAREN exp error
 
-   34 name: THIS
-   35     | IDEN
-   36     | name DOT IDEN
-   37     | name LBRACK exp RBRACK
-   38     | name LBRACK exp error
+   32 newexp: NEW IDEN LPAREN arglist RPAREN
+   33       | NEW IDEN LPAREN arglist error
+   34       | NEW simpleType expstar brackstar
 
-   39 varDec: type IDEN SEMI
-   40       | type IDEN error
+   35 brackstar: %empty
+   36          | brackstar DOUBBRACK
 
-   41 type: simpleType
-   42     | type DOUBBRACK
+   37 expstar: %empty
+   38        | expstar LBRACK exp RBRACK
+   39        | expstar LBRACK exp error
 
-   43 simpleType: INT
-   44           | IDEN
+   40 arglist: %empty
+   41        | explist
 
-   45 relop: DEQ
-   46      | NEQ
-   47      | LEQ
-   48      | GEQ
-   49      | GT
-   50      | LT
+   42 explist: exp
+   43        | explist COMMA exp
 
-   51 sumop: PLUS
-   52      | MINUS
-   53      | OR
+   44 name: THIS
+   45     | IDEN
+   46     | name DOT IDEN
+   47     | name LBRACK exp RBRACK
+   48     | name LBRACK exp error
 
-   54 proop: MULT
-   55      | DIVD
-   56      | MOD
-   57      | AND
+   49 varDec: type IDEN SEMI
+   50       | type IDEN error
 
-   58 unyop: PLUS
-   59      | MINUS
-   60      | BANG
+   51 type: simpleType
+   52     | type DOUBBRACK
+
+   53 simpleType: INT
+   54           | IDEN
+
+   55 relop: DEQ
+   56      | NEQ
+   57      | LEQ
+   58      | GEQ
+   59      | GT
+   60      | LT
+
+   61 sumop: PLUS
+   62      | MINUS
+   63      | OR
+
+   64 proop: MULT
+   65      | DIVD
+   66      | MOD
+   67      | AND
+
+   68 unyop: PLUS
+   69      | MINUS
+   70      | BANG
 
 
 Terminals, with rules where they appear
 
 $end (0) 0
-error (256) 6 11 13 14 21 23 29 38 40
-DOT (258) 36
-THIS (259) 34
-LBRACK (260) 28 29 37 38
-RBRACK (261) 28 37
-DOUBBRACK (262) 26 42
-INT (263) 43
-IDEN (264) 22 23 35 36 39 40 44
-NUM (265) 8
-NLL (266) 9
-READ (267) 12 13 14
-NEW (268) 22 23 24
-LPAREN (269) 10 11 12 13 20 21 22 23
-RPAREN (270) 10 12 14 20 22
-DEQ (271) 45
-NEQ (272) 46
-LEQ (273) 47
-GEQ (274) 48
-GT (275) 49
-LT (276) 50
-PLUS (277) 51 58
-MINUS (278) 52 59
-OR (279) 53
-MULT (280) 54
-DIVD (281) 55
-MOD (282) 56
-AND (283) 57
-BANG (284) 60
-SEMI (285) 5 39
-EQ (286) 5 6
-COMMA (287) 33
-RO (288)
-SO (289)
-PO (290)
-UO (291)
+error (256) 6 21 23 24 31 33 39 48 50
+DOT (258) 46
+THIS (259) 44
+LBRACK (260) 38 39 47 48
+RBRACK (261) 38 47
+DOUBBRACK (262) 36 52
+LBRACE (263) 9
+RBRACE (264) 9
+INT (265) 53
+IDEN (266) 14 32 33 45 46 49 50 54
+NUM (267) 18
+NLL (268) 19
+READ (269) 22 23 24
+NEW (270) 32 33 34
+LPAREN (271) 20 21 22 23 30 31 32 33
+RPAREN (272) 20 22 24 30 32
+DEQ (273) 55
+NEQ (274) 56
+LEQ (275) 57
+GEQ (276) 58
+GT (277) 59
+LT (278) 60
+PLUS (279) 61 68
+MINUS (280) 62 69
+OR (281) 63
+MULT (282) 64
+DIVD (283) 65
+MOD (284) 66
+AND (285) 67
+BANG (286) 70
+SEMI (287) 5 7 14 49
+EQ (288) 5 6
+COMMA (289) 43
+RETURN (290) 7
+RO (291)
+SO (292)
+PO (293)
+UO (294)
 
 
 Nonterminals, with rules where they appear
 
-$accept (37)
+$accept (40)
     on left: 0
-start (38)
+start (41)
     on left: 1 2, on right: 0 2
-elem (39)
+elem (42)
     on left: 3 4, on right: 2
-statement (40)
-    on left: 5 6, on right: 3
-exp (41)
-    on left: 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21, on right: 5
-    6 16 17 18 19 20 21 28 29 32 33 37 38
-newexp (42)
-    on left: 22 23 24, on right: 15
-brackstar (43)
-    on left: 25 26, on right: 24 26
-expstar (44)
-    on left: 27 28 29, on right: 24 28 29
-arglist (45)
-    on left: 30 31, on right: 22 23
-explist (46)
-    on left: 32 33, on right: 31 33
-name (47)
-    on left: 34 35 36 37 38, on right: 5 6 7 10 11 36 37 38
-varDec (48)
-    on left: 39 40, on right: 4
-type (49)
-    on left: 41 42, on right: 39 40 42
-simpleType (50)
-    on left: 43 44, on right: 24 41
-relop (51)
-    on left: 45 46 47 48 49 50, on right: 16
-sumop (52)
-    on left: 51 52 53, on right: 17
-proop (53)
-    on left: 54 55 56 57, on right: 18
-unyop (54)
-    on left: 58 59 60, on right: 19
+statement (43)
+    on left: 5 6 7 8, on right: 3 11
+block (44)
+    on left: 9, on right: 8
+statestar (45)
+    on left: 10 11, on right: 9 11
+locvardecstar (46)
+    on left: 12 13, on right: 9 13
+locvardec (47)
+    on left: 14, on right: 13
+optexp (48)
+    on left: 15 16, on right: 7
+exp (49)
+    on left: 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31, on right:
+    5 6 16 26 27 28 29 30 31 38 39 42 43 47 48
+newexp (50)
+    on left: 32 33 34, on right: 25
+brackstar (51)
+    on left: 35 36, on right: 34 36
+expstar (52)
+    on left: 37 38 39, on right: 34 38 39
+arglist (53)
+    on left: 40 41, on right: 32 33
+explist (54)
+    on left: 42 43, on right: 41 43
+name (55)
+    on left: 44 45 46 47 48, on right: 5 6 17 20 21 46 47 48
+varDec (56)
+    on left: 49 50, on right: 4
+type (57)
+    on left: 51 52, on right: 14 49 50 52
+simpleType (58)
+    on left: 53 54, on right: 34 51
+relop (59)
+    on left: 55 56 57 58 59 60, on right: 26
+sumop (60)
+    on left: 61 62 63, on right: 27
+proop (61)
+    on left: 64 65 66 67, on right: 28
+unyop (62)
+    on left: 68 69 70, on right: 29
 
 
 State 0
@@ -175,17 +206,20 @@ State 1
     0 $accept: start . $end
     2 start: start . elem
 
-    $end  shift, and go to state 2
-    THIS  shift, and go to state 3
-    INT   shift, and go to state 4
-    IDEN  shift, and go to state 5
+    $end    shift, and go to state 2
+    THIS    shift, and go to state 3
+    LBRACE  shift, and go to state 4
+    INT     shift, and go to state 5
+    IDEN    shift, and go to state 6
+    RETURN  shift, and go to state 7
 
-    elem        go to state 6
-    statement   go to state 7
-    name        go to state 8
-    varDec      go to state 9
-    type        go to state 10
-    simpleType  go to state 11
+    elem        go to state 8
+    statement   go to state 9
+    block       go to state 10
+    name        go to state 11
+    varDec      go to state 12
+    type        go to state 13
+    simpleType  go to state 14
 
 
 State 2
@@ -197,955 +231,1121 @@ State 2
 
 State 3
 
-   34 name: THIS .
+   44 name: THIS .
 
-    $default  reduce using rule 34 (name)
+    $default  reduce using rule 44 (name)
 
 
 State 4
 
-   43 simpleType: INT .
+    9 block: LBRACE . locvardecstar statestar RBRACE
 
-    $default  reduce using rule 43 (simpleType)
+    $default  reduce using rule 12 (locvardecstar)
+
+    locvardecstar  go to state 15
 
 
 State 5
 
-   35 name: IDEN .
-   44 simpleType: IDEN .
+   53 simpleType: INT .
 
-    DOUBBRACK  reduce using rule 44 (simpleType)
-    IDEN       reduce using rule 44 (simpleType)
-    $default   reduce using rule 35 (name)
+    $default  reduce using rule 53 (simpleType)
 
 
 State 6
+
+   45 name: IDEN .
+   54 simpleType: IDEN .
+
+    DOUBBRACK  reduce using rule 54 (simpleType)
+    IDEN       reduce using rule 54 (simpleType)
+    $default   reduce using rule 45 (name)
+
+
+State 7
+
+    7 statement: RETURN . optexp SEMI
+
+    THIS    shift, and go to state 3
+    IDEN    shift, and go to state 16
+    NUM     shift, and go to state 17
+    NLL     shift, and go to state 18
+    READ    shift, and go to state 19
+    NEW     shift, and go to state 20
+    LPAREN  shift, and go to state 21
+    PLUS    shift, and go to state 22
+    MINUS   shift, and go to state 23
+    BANG    shift, and go to state 24
+
+    $default  reduce using rule 15 (optexp)
+
+    optexp  go to state 25
+    exp     go to state 26
+    newexp  go to state 27
+    name    go to state 28
+    unyop   go to state 29
+
+
+State 8
 
     2 start: start elem .
 
     $default  reduce using rule 2 (start)
 
 
-State 7
+State 9
 
     3 elem: statement .
 
     $default  reduce using rule 3 (elem)
 
 
-State 8
+State 10
+
+    8 statement: block .
+
+    $default  reduce using rule 8 (statement)
+
+
+State 11
 
     5 statement: name . EQ exp SEMI
     6          | name . EQ exp error
-   36 name: name . DOT IDEN
-   37     | name . LBRACK exp RBRACK
-   38     | name . LBRACK exp error
+   46 name: name . DOT IDEN
+   47     | name . LBRACK exp RBRACK
+   48     | name . LBRACK exp error
 
-    DOT     shift, and go to state 12
-    LBRACK  shift, and go to state 13
-    EQ      shift, and go to state 14
+    DOT     shift, and go to state 30
+    LBRACK  shift, and go to state 31
+    EQ      shift, and go to state 32
 
 
-State 9
+State 12
 
     4 elem: varDec .
 
     $default  reduce using rule 4 (elem)
 
 
-State 10
-
-   39 varDec: type . IDEN SEMI
-   40       | type . IDEN error
-   42 type: type . DOUBBRACK
-
-    DOUBBRACK  shift, and go to state 15
-    IDEN       shift, and go to state 16
-
-
-State 11
-
-   41 type: simpleType .
-
-    $default  reduce using rule 41 (type)
-
-
-State 12
-
-   36 name: name DOT . IDEN
-
-    IDEN  shift, and go to state 17
-
-
 State 13
 
-   37 name: name LBRACK . exp RBRACK
-   38     | name LBRACK . exp error
+   49 varDec: type . IDEN SEMI
+   50       | type . IDEN error
+   52 type: type . DOUBBRACK
 
-    THIS    shift, and go to state 3
-    IDEN    shift, and go to state 18
-    NUM     shift, and go to state 19
-    NLL     shift, and go to state 20
-    READ    shift, and go to state 21
-    NEW     shift, and go to state 22
-    LPAREN  shift, and go to state 23
-    PLUS    shift, and go to state 24
-    MINUS   shift, and go to state 25
-    BANG    shift, and go to state 26
-
-    exp     go to state 27
-    newexp  go to state 28
-    name    go to state 29
-    unyop   go to state 30
+    DOUBBRACK  shift, and go to state 33
+    IDEN       shift, and go to state 34
 
 
 State 14
+
+   51 type: simpleType .
+
+    $default  reduce using rule 51 (type)
+
+
+State 15
+
+    9 block: LBRACE locvardecstar . statestar RBRACE
+   13 locvardecstar: locvardecstar . locvardec
+
+    INT   shift, and go to state 5
+    IDEN  shift, and go to state 35
+
+    IDEN      [reduce using rule 10 (statestar)]
+    $default  reduce using rule 10 (statestar)
+
+    statestar   go to state 36
+    locvardec   go to state 37
+    type        go to state 38
+    simpleType  go to state 14
+
+
+State 16
+
+   45 name: IDEN .
+
+    $default  reduce using rule 45 (name)
+
+
+State 17
+
+   18 exp: NUM .
+
+    $default  reduce using rule 18 (exp)
+
+
+State 18
+
+   19 exp: NLL .
+
+    $default  reduce using rule 19 (exp)
+
+
+State 19
+
+   22 exp: READ . LPAREN RPAREN
+   23    | READ . LPAREN error
+   24    | READ . error RPAREN
+
+    error   shift, and go to state 39
+    LPAREN  shift, and go to state 40
+
+
+State 20
+
+   32 newexp: NEW . IDEN LPAREN arglist RPAREN
+   33       | NEW . IDEN LPAREN arglist error
+   34       | NEW . simpleType expstar brackstar
+
+    INT   shift, and go to state 5
+    IDEN  shift, and go to state 41
+
+    simpleType  go to state 42
+
+
+State 21
+
+   30 exp: LPAREN . exp RPAREN
+   31    | LPAREN . exp error
+
+    THIS    shift, and go to state 3
+    IDEN    shift, and go to state 16
+    NUM     shift, and go to state 17
+    NLL     shift, and go to state 18
+    READ    shift, and go to state 19
+    NEW     shift, and go to state 20
+    LPAREN  shift, and go to state 21
+    PLUS    shift, and go to state 22
+    MINUS   shift, and go to state 23
+    BANG    shift, and go to state 24
+
+    exp     go to state 43
+    newexp  go to state 27
+    name    go to state 28
+    unyop   go to state 29
+
+
+State 22
+
+   68 unyop: PLUS .
+
+    $default  reduce using rule 68 (unyop)
+
+
+State 23
+
+   69 unyop: MINUS .
+
+    $default  reduce using rule 69 (unyop)
+
+
+State 24
+
+   70 unyop: BANG .
+
+    $default  reduce using rule 70 (unyop)
+
+
+State 25
+
+    7 statement: RETURN optexp . SEMI
+
+    SEMI  shift, and go to state 44
+
+
+State 26
+
+   16 optexp: exp .
+   26 exp: exp . relop exp
+   27    | exp . sumop exp
+   28    | exp . proop exp
+
+    DEQ    shift, and go to state 45
+    NEQ    shift, and go to state 46
+    LEQ    shift, and go to state 47
+    GEQ    shift, and go to state 48
+    GT     shift, and go to state 49
+    LT     shift, and go to state 50
+    PLUS   shift, and go to state 51
+    MINUS  shift, and go to state 52
+    OR     shift, and go to state 53
+    MULT   shift, and go to state 54
+    DIVD   shift, and go to state 55
+    MOD    shift, and go to state 56
+    AND    shift, and go to state 57
+
+    $default  reduce using rule 16 (optexp)
+
+    relop  go to state 58
+    sumop  go to state 59
+    proop  go to state 60
+
+
+State 27
+
+   25 exp: newexp .
+
+    $default  reduce using rule 25 (exp)
+
+
+State 28
+
+   17 exp: name .
+   20    | name . LPAREN RPAREN
+   21    | name . LPAREN error
+   46 name: name . DOT IDEN
+   47     | name . LBRACK exp RBRACK
+   48     | name . LBRACK exp error
+
+    DOT     shift, and go to state 30
+    LBRACK  shift, and go to state 31
+    LPAREN  shift, and go to state 61
+
+    $default  reduce using rule 17 (exp)
+
+
+State 29
+
+   29 exp: unyop . exp
+
+    THIS    shift, and go to state 3
+    IDEN    shift, and go to state 16
+    NUM     shift, and go to state 17
+    NLL     shift, and go to state 18
+    READ    shift, and go to state 19
+    NEW     shift, and go to state 20
+    LPAREN  shift, and go to state 21
+    PLUS    shift, and go to state 22
+    MINUS   shift, and go to state 23
+    BANG    shift, and go to state 24
+
+    exp     go to state 62
+    newexp  go to state 27
+    name    go to state 28
+    unyop   go to state 29
+
+
+State 30
+
+   46 name: name DOT . IDEN
+
+    IDEN  shift, and go to state 63
+
+
+State 31
+
+   47 name: name LBRACK . exp RBRACK
+   48     | name LBRACK . exp error
+
+    THIS    shift, and go to state 3
+    IDEN    shift, and go to state 16
+    NUM     shift, and go to state 17
+    NLL     shift, and go to state 18
+    READ    shift, and go to state 19
+    NEW     shift, and go to state 20
+    LPAREN  shift, and go to state 21
+    PLUS    shift, and go to state 22
+    MINUS   shift, and go to state 23
+    BANG    shift, and go to state 24
+
+    exp     go to state 64
+    newexp  go to state 27
+    name    go to state 28
+    unyop   go to state 29
+
+
+State 32
 
     5 statement: name EQ . exp SEMI
     6          | name EQ . exp error
 
     THIS    shift, and go to state 3
-    IDEN    shift, and go to state 18
-    NUM     shift, and go to state 19
-    NLL     shift, and go to state 20
-    READ    shift, and go to state 21
-    NEW     shift, and go to state 22
-    LPAREN  shift, and go to state 23
-    PLUS    shift, and go to state 24
-    MINUS   shift, and go to state 25
-    BANG    shift, and go to state 26
-
-    exp     go to state 31
-    newexp  go to state 28
-    name    go to state 29
-    unyop   go to state 30
-
-
-State 15
-
-   42 type: type DOUBBRACK .
-
-    $default  reduce using rule 42 (type)
-
-
-State 16
-
-   39 varDec: type IDEN . SEMI
-   40       | type IDEN . error
-
-    error  shift, and go to state 32
-    SEMI   shift, and go to state 33
-
-
-State 17
-
-   36 name: name DOT IDEN .
-
-    $default  reduce using rule 36 (name)
-
-
-State 18
-
-   35 name: IDEN .
-
-    $default  reduce using rule 35 (name)
-
-
-State 19
-
-    8 exp: NUM .
-
-    $default  reduce using rule 8 (exp)
-
-
-State 20
-
-    9 exp: NLL .
-
-    $default  reduce using rule 9 (exp)
-
-
-State 21
-
-   12 exp: READ . LPAREN RPAREN
-   13    | READ . LPAREN error
-   14    | READ . error RPAREN
-
-    error   shift, and go to state 34
-    LPAREN  shift, and go to state 35
-
-
-State 22
-
-   22 newexp: NEW . IDEN LPAREN arglist RPAREN
-   23       | NEW . IDEN LPAREN arglist error
-   24       | NEW . simpleType expstar brackstar
-
-    INT   shift, and go to state 4
-    IDEN  shift, and go to state 36
-
-    simpleType  go to state 37
-
-
-State 23
-
-   20 exp: LPAREN . exp RPAREN
-   21    | LPAREN . exp error
-
-    THIS    shift, and go to state 3
-    IDEN    shift, and go to state 18
-    NUM     shift, and go to state 19
-    NLL     shift, and go to state 20
-    READ    shift, and go to state 21
-    NEW     shift, and go to state 22
-    LPAREN  shift, and go to state 23
-    PLUS    shift, and go to state 24
-    MINUS   shift, and go to state 25
-    BANG    shift, and go to state 26
-
-    exp     go to state 38
-    newexp  go to state 28
-    name    go to state 29
-    unyop   go to state 30
-
-
-State 24
-
-   58 unyop: PLUS .
-
-    $default  reduce using rule 58 (unyop)
-
-
-State 25
-
-   59 unyop: MINUS .
-
-    $default  reduce using rule 59 (unyop)
-
-
-State 26
-
-   60 unyop: BANG .
-
-    $default  reduce using rule 60 (unyop)
-
-
-State 27
-
-   16 exp: exp . relop exp
-   17    | exp . sumop exp
-   18    | exp . proop exp
-   37 name: name LBRACK exp . RBRACK
-   38     | name LBRACK exp . error
-
-    error   shift, and go to state 39
-    RBRACK  shift, and go to state 40
-    DEQ     shift, and go to state 41
-    NEQ     shift, and go to state 42
-    LEQ     shift, and go to state 43
-    GEQ     shift, and go to state 44
-    GT      shift, and go to state 45
-    LT      shift, and go to state 46
-    PLUS    shift, and go to state 47
-    MINUS   shift, and go to state 48
-    OR      shift, and go to state 49
-    MULT    shift, and go to state 50
-    DIVD    shift, and go to state 51
-    MOD     shift, and go to state 52
-    AND     shift, and go to state 53
-
-    relop  go to state 54
-    sumop  go to state 55
-    proop  go to state 56
-
-
-State 28
-
-   15 exp: newexp .
-
-    $default  reduce using rule 15 (exp)
-
-
-State 29
-
-    7 exp: name .
-   10    | name . LPAREN RPAREN
-   11    | name . LPAREN error
-   36 name: name . DOT IDEN
-   37     | name . LBRACK exp RBRACK
-   38     | name . LBRACK exp error
-
-    DOT     shift, and go to state 12
-    LBRACK  shift, and go to state 13
-    LPAREN  shift, and go to state 57
-
-    $default  reduce using rule 7 (exp)
-
-
-State 30
-
-   19 exp: unyop . exp
-
-    THIS    shift, and go to state 3
-    IDEN    shift, and go to state 18
-    NUM     shift, and go to state 19
-    NLL     shift, and go to state 20
-    READ    shift, and go to state 21
-    NEW     shift, and go to state 22
-    LPAREN  shift, and go to state 23
-    PLUS    shift, and go to state 24
-    MINUS   shift, and go to state 25
-    BANG    shift, and go to state 26
-
-    exp     go to state 58
-    newexp  go to state 28
-    name    go to state 29
-    unyop   go to state 30
-
-
-State 31
-
-    5 statement: name EQ exp . SEMI
-    6          | name EQ exp . error
-   16 exp: exp . relop exp
-   17    | exp . sumop exp
-   18    | exp . proop exp
-
-    error  shift, and go to state 59
-    DEQ    shift, and go to state 41
-    NEQ    shift, and go to state 42
-    LEQ    shift, and go to state 43
-    GEQ    shift, and go to state 44
-    GT     shift, and go to state 45
-    LT     shift, and go to state 46
-    PLUS   shift, and go to state 47
-    MINUS  shift, and go to state 48
-    OR     shift, and go to state 49
-    MULT   shift, and go to state 50
-    DIVD   shift, and go to state 51
-    MOD    shift, and go to state 52
-    AND    shift, and go to state 53
-    SEMI   shift, and go to state 60
-
-    relop  go to state 54
-    sumop  go to state 55
-    proop  go to state 56
-
-
-State 32
-
-   40 varDec: type IDEN error .
-
-    $default  reduce using rule 40 (varDec)
+    IDEN    shift, and go to state 16
+    NUM     shift, and go to state 17
+    NLL     shift, and go to state 18
+    READ    shift, and go to state 19
+    NEW     shift, and go to state 20
+    LPAREN  shift, and go to state 21
+    PLUS    shift, and go to state 22
+    MINUS   shift, and go to state 23
+    BANG    shift, and go to state 24
+
+    exp     go to state 65
+    newexp  go to state 27
+    name    go to state 28
+    unyop   go to state 29
 
 
 State 33
 
-   39 varDec: type IDEN SEMI .
+   52 type: type DOUBBRACK .
 
-    $default  reduce using rule 39 (varDec)
+    $default  reduce using rule 52 (type)
 
 
 State 34
 
-   14 exp: READ error . RPAREN
+   49 varDec: type IDEN . SEMI
+   50       | type IDEN . error
 
-    RPAREN  shift, and go to state 61
+    error  shift, and go to state 66
+    SEMI   shift, and go to state 67
 
 
 State 35
 
-   12 exp: READ LPAREN . RPAREN
-   13    | READ LPAREN . error
+   54 simpleType: IDEN .
 
-    error   shift, and go to state 62
-    RPAREN  shift, and go to state 63
+    $default  reduce using rule 54 (simpleType)
 
 
 State 36
 
-   22 newexp: NEW IDEN . LPAREN arglist RPAREN
-   23       | NEW IDEN . LPAREN arglist error
-   44 simpleType: IDEN .
+    9 block: LBRACE locvardecstar statestar . RBRACE
+   11 statestar: statestar . statement
 
-    LPAREN  shift, and go to state 64
+    THIS    shift, and go to state 3
+    LBRACE  shift, and go to state 4
+    RBRACE  shift, and go to state 68
+    IDEN    shift, and go to state 16
+    RETURN  shift, and go to state 7
 
-    $default  reduce using rule 44 (simpleType)
+    statement  go to state 69
+    block      go to state 10
+    name       go to state 11
 
 
 State 37
 
-   24 newexp: NEW simpleType . expstar brackstar
+   13 locvardecstar: locvardecstar locvardec .
 
-    $default  reduce using rule 27 (expstar)
-
-    expstar  go to state 65
+    $default  reduce using rule 13 (locvardecstar)
 
 
 State 38
 
-   16 exp: exp . relop exp
-   17    | exp . sumop exp
-   18    | exp . proop exp
-   20    | LPAREN exp . RPAREN
-   21    | LPAREN exp . error
+   14 locvardec: type . IDEN SEMI
+   52 type: type . DOUBBRACK
 
-    error   shift, and go to state 66
-    RPAREN  shift, and go to state 67
-    DEQ     shift, and go to state 41
-    NEQ     shift, and go to state 42
-    LEQ     shift, and go to state 43
-    GEQ     shift, and go to state 44
-    GT      shift, and go to state 45
-    LT      shift, and go to state 46
-    PLUS    shift, and go to state 47
-    MINUS   shift, and go to state 48
-    OR      shift, and go to state 49
-    MULT    shift, and go to state 50
-    DIVD    shift, and go to state 51
-    MOD     shift, and go to state 52
-    AND     shift, and go to state 53
-
-    relop  go to state 54
-    sumop  go to state 55
-    proop  go to state 56
+    DOUBBRACK  shift, and go to state 33
+    IDEN       shift, and go to state 70
 
 
 State 39
 
-   38 name: name LBRACK exp error .
+   24 exp: READ error . RPAREN
 
-    $default  reduce using rule 38 (name)
+    RPAREN  shift, and go to state 71
 
 
 State 40
 
-   37 name: name LBRACK exp RBRACK .
+   22 exp: READ LPAREN . RPAREN
+   23    | READ LPAREN . error
 
-    $default  reduce using rule 37 (name)
+    error   shift, and go to state 72
+    RPAREN  shift, and go to state 73
 
 
 State 41
 
-   45 relop: DEQ .
+   32 newexp: NEW IDEN . LPAREN arglist RPAREN
+   33       | NEW IDEN . LPAREN arglist error
+   54 simpleType: IDEN .
 
-    $default  reduce using rule 45 (relop)
+    LPAREN  shift, and go to state 74
+
+    $default  reduce using rule 54 (simpleType)
 
 
 State 42
 
-   46 relop: NEQ .
+   34 newexp: NEW simpleType . expstar brackstar
 
-    $default  reduce using rule 46 (relop)
+    $default  reduce using rule 37 (expstar)
+
+    expstar  go to state 75
 
 
 State 43
 
-   47 relop: LEQ .
+   26 exp: exp . relop exp
+   27    | exp . sumop exp
+   28    | exp . proop exp
+   30    | LPAREN exp . RPAREN
+   31    | LPAREN exp . error
 
-    $default  reduce using rule 47 (relop)
+    error   shift, and go to state 76
+    RPAREN  shift, and go to state 77
+    DEQ     shift, and go to state 45
+    NEQ     shift, and go to state 46
+    LEQ     shift, and go to state 47
+    GEQ     shift, and go to state 48
+    GT      shift, and go to state 49
+    LT      shift, and go to state 50
+    PLUS    shift, and go to state 51
+    MINUS   shift, and go to state 52
+    OR      shift, and go to state 53
+    MULT    shift, and go to state 54
+    DIVD    shift, and go to state 55
+    MOD     shift, and go to state 56
+    AND     shift, and go to state 57
+
+    relop  go to state 58
+    sumop  go to state 59
+    proop  go to state 60
 
 
 State 44
 
-   48 relop: GEQ .
+    7 statement: RETURN optexp SEMI .
 
-    $default  reduce using rule 48 (relop)
+    $default  reduce using rule 7 (statement)
 
 
 State 45
 
-   49 relop: GT .
+   55 relop: DEQ .
 
-    $default  reduce using rule 49 (relop)
+    $default  reduce using rule 55 (relop)
 
 
 State 46
 
-   50 relop: LT .
+   56 relop: NEQ .
 
-    $default  reduce using rule 50 (relop)
+    $default  reduce using rule 56 (relop)
 
 
 State 47
 
-   51 sumop: PLUS .
+   57 relop: LEQ .
 
-    $default  reduce using rule 51 (sumop)
+    $default  reduce using rule 57 (relop)
 
 
 State 48
 
-   52 sumop: MINUS .
+   58 relop: GEQ .
 
-    $default  reduce using rule 52 (sumop)
+    $default  reduce using rule 58 (relop)
 
 
 State 49
 
-   53 sumop: OR .
+   59 relop: GT .
 
-    $default  reduce using rule 53 (sumop)
+    $default  reduce using rule 59 (relop)
 
 
 State 50
 
-   54 proop: MULT .
+   60 relop: LT .
 
-    $default  reduce using rule 54 (proop)
+    $default  reduce using rule 60 (relop)
 
 
 State 51
 
-   55 proop: DIVD .
+   61 sumop: PLUS .
 
-    $default  reduce using rule 55 (proop)
+    $default  reduce using rule 61 (sumop)
 
 
 State 52
 
-   56 proop: MOD .
+   62 sumop: MINUS .
 
-    $default  reduce using rule 56 (proop)
+    $default  reduce using rule 62 (sumop)
 
 
 State 53
 
-   57 proop: AND .
+   63 sumop: OR .
 
-    $default  reduce using rule 57 (proop)
+    $default  reduce using rule 63 (sumop)
 
 
 State 54
 
-   16 exp: exp relop . exp
+   64 proop: MULT .
 
-    THIS    shift, and go to state 3
-    IDEN    shift, and go to state 18
-    NUM     shift, and go to state 19
-    NLL     shift, and go to state 20
-    READ    shift, and go to state 21
-    NEW     shift, and go to state 22
-    LPAREN  shift, and go to state 23
-    PLUS    shift, and go to state 24
-    MINUS   shift, and go to state 25
-    BANG    shift, and go to state 26
-
-    exp     go to state 68
-    newexp  go to state 28
-    name    go to state 29
-    unyop   go to state 30
+    $default  reduce using rule 64 (proop)
 
 
 State 55
 
-   17 exp: exp sumop . exp
+   65 proop: DIVD .
 
-    THIS    shift, and go to state 3
-    IDEN    shift, and go to state 18
-    NUM     shift, and go to state 19
-    NLL     shift, and go to state 20
-    READ    shift, and go to state 21
-    NEW     shift, and go to state 22
-    LPAREN  shift, and go to state 23
-    PLUS    shift, and go to state 24
-    MINUS   shift, and go to state 25
-    BANG    shift, and go to state 26
-
-    exp     go to state 69
-    newexp  go to state 28
-    name    go to state 29
-    unyop   go to state 30
+    $default  reduce using rule 65 (proop)
 
 
 State 56
 
-   18 exp: exp proop . exp
+   66 proop: MOD .
 
-    THIS    shift, and go to state 3
-    IDEN    shift, and go to state 18
-    NUM     shift, and go to state 19
-    NLL     shift, and go to state 20
-    READ    shift, and go to state 21
-    NEW     shift, and go to state 22
-    LPAREN  shift, and go to state 23
-    PLUS    shift, and go to state 24
-    MINUS   shift, and go to state 25
-    BANG    shift, and go to state 26
-
-    exp     go to state 70
-    newexp  go to state 28
-    name    go to state 29
-    unyop   go to state 30
+    $default  reduce using rule 66 (proop)
 
 
 State 57
 
-   10 exp: name LPAREN . RPAREN
-   11    | name LPAREN . error
+   67 proop: AND .
 
-    error   shift, and go to state 71
-    RPAREN  shift, and go to state 72
+    $default  reduce using rule 67 (proop)
 
 
 State 58
 
-   16 exp: exp . relop exp
-   17    | exp . sumop exp
-   18    | exp . proop exp
-   19    | unyop exp .
+   26 exp: exp relop . exp
 
-    $default  reduce using rule 19 (exp)
+    THIS    shift, and go to state 3
+    IDEN    shift, and go to state 16
+    NUM     shift, and go to state 17
+    NLL     shift, and go to state 18
+    READ    shift, and go to state 19
+    NEW     shift, and go to state 20
+    LPAREN  shift, and go to state 21
+    PLUS    shift, and go to state 22
+    MINUS   shift, and go to state 23
+    BANG    shift, and go to state 24
 
-    relop  go to state 54
-    sumop  go to state 55
-    proop  go to state 56
+    exp     go to state 78
+    newexp  go to state 27
+    name    go to state 28
+    unyop   go to state 29
 
 
 State 59
+
+   27 exp: exp sumop . exp
+
+    THIS    shift, and go to state 3
+    IDEN    shift, and go to state 16
+    NUM     shift, and go to state 17
+    NLL     shift, and go to state 18
+    READ    shift, and go to state 19
+    NEW     shift, and go to state 20
+    LPAREN  shift, and go to state 21
+    PLUS    shift, and go to state 22
+    MINUS   shift, and go to state 23
+    BANG    shift, and go to state 24
+
+    exp     go to state 79
+    newexp  go to state 27
+    name    go to state 28
+    unyop   go to state 29
+
+
+State 60
+
+   28 exp: exp proop . exp
+
+    THIS    shift, and go to state 3
+    IDEN    shift, and go to state 16
+    NUM     shift, and go to state 17
+    NLL     shift, and go to state 18
+    READ    shift, and go to state 19
+    NEW     shift, and go to state 20
+    LPAREN  shift, and go to state 21
+    PLUS    shift, and go to state 22
+    MINUS   shift, and go to state 23
+    BANG    shift, and go to state 24
+
+    exp     go to state 80
+    newexp  go to state 27
+    name    go to state 28
+    unyop   go to state 29
+
+
+State 61
+
+   20 exp: name LPAREN . RPAREN
+   21    | name LPAREN . error
+
+    error   shift, and go to state 81
+    RPAREN  shift, and go to state 82
+
+
+State 62
+
+   26 exp: exp . relop exp
+   27    | exp . sumop exp
+   28    | exp . proop exp
+   29    | unyop exp .
+
+    $default  reduce using rule 29 (exp)
+
+    relop  go to state 58
+    sumop  go to state 59
+    proop  go to state 60
+
+
+State 63
+
+   46 name: name DOT IDEN .
+
+    $default  reduce using rule 46 (name)
+
+
+State 64
+
+   26 exp: exp . relop exp
+   27    | exp . sumop exp
+   28    | exp . proop exp
+   47 name: name LBRACK exp . RBRACK
+   48     | name LBRACK exp . error
+
+    error   shift, and go to state 83
+    RBRACK  shift, and go to state 84
+    DEQ     shift, and go to state 45
+    NEQ     shift, and go to state 46
+    LEQ     shift, and go to state 47
+    GEQ     shift, and go to state 48
+    GT      shift, and go to state 49
+    LT      shift, and go to state 50
+    PLUS    shift, and go to state 51
+    MINUS   shift, and go to state 52
+    OR      shift, and go to state 53
+    MULT    shift, and go to state 54
+    DIVD    shift, and go to state 55
+    MOD     shift, and go to state 56
+    AND     shift, and go to state 57
+
+    relop  go to state 58
+    sumop  go to state 59
+    proop  go to state 60
+
+
+State 65
+
+    5 statement: name EQ exp . SEMI
+    6          | name EQ exp . error
+   26 exp: exp . relop exp
+   27    | exp . sumop exp
+   28    | exp . proop exp
+
+    error  shift, and go to state 85
+    DEQ    shift, and go to state 45
+    NEQ    shift, and go to state 46
+    LEQ    shift, and go to state 47
+    GEQ    shift, and go to state 48
+    GT     shift, and go to state 49
+    LT     shift, and go to state 50
+    PLUS   shift, and go to state 51
+    MINUS  shift, and go to state 52
+    OR     shift, and go to state 53
+    MULT   shift, and go to state 54
+    DIVD   shift, and go to state 55
+    MOD    shift, and go to state 56
+    AND    shift, and go to state 57
+    SEMI   shift, and go to state 86
+
+    relop  go to state 58
+    sumop  go to state 59
+    proop  go to state 60
+
+
+State 66
+
+   50 varDec: type IDEN error .
+
+    $default  reduce using rule 50 (varDec)
+
+
+State 67
+
+   49 varDec: type IDEN SEMI .
+
+    $default  reduce using rule 49 (varDec)
+
+
+State 68
+
+    9 block: LBRACE locvardecstar statestar RBRACE .
+
+    $default  reduce using rule 9 (block)
+
+
+State 69
+
+   11 statestar: statestar statement .
+
+    $default  reduce using rule 11 (statestar)
+
+
+State 70
+
+   14 locvardec: type IDEN . SEMI
+
+    SEMI  shift, and go to state 87
+
+
+State 71
+
+   24 exp: READ error RPAREN .
+
+    $default  reduce using rule 24 (exp)
+
+
+State 72
+
+   23 exp: READ LPAREN error .
+
+    $default  reduce using rule 23 (exp)
+
+
+State 73
+
+   22 exp: READ LPAREN RPAREN .
+
+    $default  reduce using rule 22 (exp)
+
+
+State 74
+
+   32 newexp: NEW IDEN LPAREN . arglist RPAREN
+   33       | NEW IDEN LPAREN . arglist error
+
+    THIS    shift, and go to state 3
+    IDEN    shift, and go to state 16
+    NUM     shift, and go to state 17
+    NLL     shift, and go to state 18
+    READ    shift, and go to state 19
+    NEW     shift, and go to state 20
+    LPAREN  shift, and go to state 21
+    PLUS    shift, and go to state 22
+    MINUS   shift, and go to state 23
+    BANG    shift, and go to state 24
+
+    $default  reduce using rule 40 (arglist)
+
+    exp      go to state 88
+    newexp   go to state 27
+    arglist  go to state 89
+    explist  go to state 90
+    name     go to state 28
+    unyop    go to state 29
+
+
+State 75
+
+   34 newexp: NEW simpleType expstar . brackstar
+   38 expstar: expstar . LBRACK exp RBRACK
+   39        | expstar . LBRACK exp error
+
+    LBRACK  shift, and go to state 91
+
+    $default  reduce using rule 35 (brackstar)
+
+    brackstar  go to state 92
+
+
+State 76
+
+   31 exp: LPAREN exp error .
+
+    $default  reduce using rule 31 (exp)
+
+
+State 77
+
+   30 exp: LPAREN exp RPAREN .
+
+    $default  reduce using rule 30 (exp)
+
+
+State 78
+
+   26 exp: exp . relop exp
+   26    | exp relop exp .
+   27    | exp . sumop exp
+   28    | exp . proop exp
+
+    PLUS   shift, and go to state 51
+    MINUS  shift, and go to state 52
+    OR     shift, and go to state 53
+    MULT   shift, and go to state 54
+    DIVD   shift, and go to state 55
+    MOD    shift, and go to state 56
+    AND    shift, and go to state 57
+
+    $default  reduce using rule 26 (exp)
+
+    relop  go to state 58
+    sumop  go to state 59
+    proop  go to state 60
+
+
+State 79
+
+   26 exp: exp . relop exp
+   27    | exp . sumop exp
+   27    | exp sumop exp .
+   28    | exp . proop exp
+
+    MULT  shift, and go to state 54
+    DIVD  shift, and go to state 55
+    MOD   shift, and go to state 56
+    AND   shift, and go to state 57
+
+    $default  reduce using rule 27 (exp)
+
+    relop  go to state 58
+    sumop  go to state 59
+    proop  go to state 60
+
+
+State 80
+
+   26 exp: exp . relop exp
+   27    | exp . sumop exp
+   28    | exp . proop exp
+   28    | exp proop exp .
+
+    $default  reduce using rule 28 (exp)
+
+    relop  go to state 58
+    sumop  go to state 59
+    proop  go to state 60
+
+
+State 81
+
+   21 exp: name LPAREN error .
+
+    $default  reduce using rule 21 (exp)
+
+
+State 82
+
+   20 exp: name LPAREN RPAREN .
+
+    $default  reduce using rule 20 (exp)
+
+
+State 83
+
+   48 name: name LBRACK exp error .
+
+    $default  reduce using rule 48 (name)
+
+
+State 84
+
+   47 name: name LBRACK exp RBRACK .
+
+    $default  reduce using rule 47 (name)
+
+
+State 85
 
     6 statement: name EQ exp error .
 
     $default  reduce using rule 6 (statement)
 
 
-State 60
+State 86
 
     5 statement: name EQ exp SEMI .
 
     $default  reduce using rule 5 (statement)
 
 
-State 61
+State 87
 
-   14 exp: READ error RPAREN .
+   14 locvardec: type IDEN SEMI .
 
-    $default  reduce using rule 14 (exp)
-
-
-State 62
-
-   13 exp: READ LPAREN error .
-
-    $default  reduce using rule 13 (exp)
+    $default  reduce using rule 14 (locvardec)
 
 
-State 63
+State 88
 
-   12 exp: READ LPAREN RPAREN .
+   26 exp: exp . relop exp
+   27    | exp . sumop exp
+   28    | exp . proop exp
+   42 explist: exp .
 
-    $default  reduce using rule 12 (exp)
+    DEQ    shift, and go to state 45
+    NEQ    shift, and go to state 46
+    LEQ    shift, and go to state 47
+    GEQ    shift, and go to state 48
+    GT     shift, and go to state 49
+    LT     shift, and go to state 50
+    PLUS   shift, and go to state 51
+    MINUS  shift, and go to state 52
+    OR     shift, and go to state 53
+    MULT   shift, and go to state 54
+    DIVD   shift, and go to state 55
+    MOD    shift, and go to state 56
+    AND    shift, and go to state 57
+
+    $default  reduce using rule 42 (explist)
+
+    relop  go to state 58
+    sumop  go to state 59
+    proop  go to state 60
 
 
-State 64
+State 89
 
-   22 newexp: NEW IDEN LPAREN . arglist RPAREN
-   23       | NEW IDEN LPAREN . arglist error
+   32 newexp: NEW IDEN LPAREN arglist . RPAREN
+   33       | NEW IDEN LPAREN arglist . error
+
+    error   shift, and go to state 93
+    RPAREN  shift, and go to state 94
+
+
+State 90
+
+   41 arglist: explist .
+   43 explist: explist . COMMA exp
+
+    COMMA  shift, and go to state 95
+
+    $default  reduce using rule 41 (arglist)
+
+
+State 91
+
+   38 expstar: expstar LBRACK . exp RBRACK
+   39        | expstar LBRACK . exp error
 
     THIS    shift, and go to state 3
-    IDEN    shift, and go to state 18
-    NUM     shift, and go to state 19
-    NLL     shift, and go to state 20
-    READ    shift, and go to state 21
-    NEW     shift, and go to state 22
-    LPAREN  shift, and go to state 23
-    PLUS    shift, and go to state 24
-    MINUS   shift, and go to state 25
-    BANG    shift, and go to state 26
+    IDEN    shift, and go to state 16
+    NUM     shift, and go to state 17
+    NLL     shift, and go to state 18
+    READ    shift, and go to state 19
+    NEW     shift, and go to state 20
+    LPAREN  shift, and go to state 21
+    PLUS    shift, and go to state 22
+    MINUS   shift, and go to state 23
+    BANG    shift, and go to state 24
 
-    $default  reduce using rule 30 (arglist)
-
-    exp      go to state 73
-    newexp   go to state 28
-    arglist  go to state 74
-    explist  go to state 75
-    name     go to state 29
-    unyop    go to state 30
+    exp     go to state 96
+    newexp  go to state 27
+    name    go to state 28
+    unyop   go to state 29
 
 
-State 65
+State 92
 
-   24 newexp: NEW simpleType expstar . brackstar
-   28 expstar: expstar . LBRACK exp RBRACK
-   29        | expstar . LBRACK exp error
+   34 newexp: NEW simpleType expstar brackstar .
+   36 brackstar: brackstar . DOUBBRACK
 
-    LBRACK  shift, and go to state 76
+    DOUBBRACK  shift, and go to state 97
 
-    $default  reduce using rule 25 (brackstar)
-
-    brackstar  go to state 77
+    $default  reduce using rule 34 (newexp)
 
 
-State 66
+State 93
 
-   21 exp: LPAREN exp error .
+   33 newexp: NEW IDEN LPAREN arglist error .
 
-    $default  reduce using rule 21 (exp)
-
-
-State 67
-
-   20 exp: LPAREN exp RPAREN .
-
-    $default  reduce using rule 20 (exp)
+    $default  reduce using rule 33 (newexp)
 
 
-State 68
+State 94
 
-   16 exp: exp . relop exp
-   16    | exp relop exp .
-   17    | exp . sumop exp
-   18    | exp . proop exp
+   32 newexp: NEW IDEN LPAREN arglist RPAREN .
 
-    PLUS   shift, and go to state 47
-    MINUS  shift, and go to state 48
-    OR     shift, and go to state 49
-    MULT   shift, and go to state 50
-    DIVD   shift, and go to state 51
-    MOD    shift, and go to state 52
-    AND    shift, and go to state 53
-
-    $default  reduce using rule 16 (exp)
-
-    relop  go to state 54
-    sumop  go to state 55
-    proop  go to state 56
+    $default  reduce using rule 32 (newexp)
 
 
-State 69
+State 95
 
-   16 exp: exp . relop exp
-   17    | exp . sumop exp
-   17    | exp sumop exp .
-   18    | exp . proop exp
-
-    MULT  shift, and go to state 50
-    DIVD  shift, and go to state 51
-    MOD   shift, and go to state 52
-    AND   shift, and go to state 53
-
-    $default  reduce using rule 17 (exp)
-
-    relop  go to state 54
-    sumop  go to state 55
-    proop  go to state 56
-
-
-State 70
-
-   16 exp: exp . relop exp
-   17    | exp . sumop exp
-   18    | exp . proop exp
-   18    | exp proop exp .
-
-    $default  reduce using rule 18 (exp)
-
-    relop  go to state 54
-    sumop  go to state 55
-    proop  go to state 56
-
-
-State 71
-
-   11 exp: name LPAREN error .
-
-    $default  reduce using rule 11 (exp)
-
-
-State 72
-
-   10 exp: name LPAREN RPAREN .
-
-    $default  reduce using rule 10 (exp)
-
-
-State 73
-
-   16 exp: exp . relop exp
-   17    | exp . sumop exp
-   18    | exp . proop exp
-   32 explist: exp .
-
-    DEQ    shift, and go to state 41
-    NEQ    shift, and go to state 42
-    LEQ    shift, and go to state 43
-    GEQ    shift, and go to state 44
-    GT     shift, and go to state 45
-    LT     shift, and go to state 46
-    PLUS   shift, and go to state 47
-    MINUS  shift, and go to state 48
-    OR     shift, and go to state 49
-    MULT   shift, and go to state 50
-    DIVD   shift, and go to state 51
-    MOD    shift, and go to state 52
-    AND    shift, and go to state 53
-
-    $default  reduce using rule 32 (explist)
-
-    relop  go to state 54
-    sumop  go to state 55
-    proop  go to state 56
-
-
-State 74
-
-   22 newexp: NEW IDEN LPAREN arglist . RPAREN
-   23       | NEW IDEN LPAREN arglist . error
-
-    error   shift, and go to state 78
-    RPAREN  shift, and go to state 79
-
-
-State 75
-
-   31 arglist: explist .
-   33 explist: explist . COMMA exp
-
-    COMMA  shift, and go to state 80
-
-    $default  reduce using rule 31 (arglist)
-
-
-State 76
-
-   28 expstar: expstar LBRACK . exp RBRACK
-   29        | expstar LBRACK . exp error
+   43 explist: explist COMMA . exp
 
     THIS    shift, and go to state 3
-    IDEN    shift, and go to state 18
-    NUM     shift, and go to state 19
-    NLL     shift, and go to state 20
-    READ    shift, and go to state 21
-    NEW     shift, and go to state 22
-    LPAREN  shift, and go to state 23
-    PLUS    shift, and go to state 24
-    MINUS   shift, and go to state 25
-    BANG    shift, and go to state 26
+    IDEN    shift, and go to state 16
+    NUM     shift, and go to state 17
+    NLL     shift, and go to state 18
+    READ    shift, and go to state 19
+    NEW     shift, and go to state 20
+    LPAREN  shift, and go to state 21
+    PLUS    shift, and go to state 22
+    MINUS   shift, and go to state 23
+    BANG    shift, and go to state 24
 
-    exp     go to state 81
-    newexp  go to state 28
-    name    go to state 29
-    unyop   go to state 30
-
-
-State 77
-
-   24 newexp: NEW simpleType expstar brackstar .
-   26 brackstar: brackstar . DOUBBRACK
-
-    DOUBBRACK  shift, and go to state 82
-
-    $default  reduce using rule 24 (newexp)
+    exp     go to state 98
+    newexp  go to state 27
+    name    go to state 28
+    unyop   go to state 29
 
 
-State 78
+State 96
 
-   23 newexp: NEW IDEN LPAREN arglist error .
+   26 exp: exp . relop exp
+   27    | exp . sumop exp
+   28    | exp . proop exp
+   38 expstar: expstar LBRACK exp . RBRACK
+   39        | expstar LBRACK exp . error
 
-    $default  reduce using rule 23 (newexp)
+    error   shift, and go to state 99
+    RBRACK  shift, and go to state 100
+    DEQ     shift, and go to state 45
+    NEQ     shift, and go to state 46
+    LEQ     shift, and go to state 47
+    GEQ     shift, and go to state 48
+    GT      shift, and go to state 49
+    LT      shift, and go to state 50
+    PLUS    shift, and go to state 51
+    MINUS   shift, and go to state 52
+    OR      shift, and go to state 53
+    MULT    shift, and go to state 54
+    DIVD    shift, and go to state 55
+    MOD     shift, and go to state 56
+    AND     shift, and go to state 57
 
-
-State 79
-
-   22 newexp: NEW IDEN LPAREN arglist RPAREN .
-
-    $default  reduce using rule 22 (newexp)
-
-
-State 80
-
-   33 explist: explist COMMA . exp
-
-    THIS    shift, and go to state 3
-    IDEN    shift, and go to state 18
-    NUM     shift, and go to state 19
-    NLL     shift, and go to state 20
-    READ    shift, and go to state 21
-    NEW     shift, and go to state 22
-    LPAREN  shift, and go to state 23
-    PLUS    shift, and go to state 24
-    MINUS   shift, and go to state 25
-    BANG    shift, and go to state 26
-
-    exp     go to state 83
-    newexp  go to state 28
-    name    go to state 29
-    unyop   go to state 30
+    relop  go to state 58
+    sumop  go to state 59
+    proop  go to state 60
 
 
-State 81
+State 97
 
-   16 exp: exp . relop exp
-   17    | exp . sumop exp
-   18    | exp . proop exp
-   28 expstar: expstar LBRACK exp . RBRACK
-   29        | expstar LBRACK exp . error
+   36 brackstar: brackstar DOUBBRACK .
 
-    error   shift, and go to state 84
-    RBRACK  shift, and go to state 85
-    DEQ     shift, and go to state 41
-    NEQ     shift, and go to state 42
-    LEQ     shift, and go to state 43
-    GEQ     shift, and go to state 44
-    GT      shift, and go to state 45
-    LT      shift, and go to state 46
-    PLUS    shift, and go to state 47
-    MINUS   shift, and go to state 48
-    OR      shift, and go to state 49
-    MULT    shift, and go to state 50
-    DIVD    shift, and go to state 51
-    MOD     shift, and go to state 52
-    AND     shift, and go to state 53
-
-    relop  go to state 54
-    sumop  go to state 55
-    proop  go to state 56
+    $default  reduce using rule 36 (brackstar)
 
 
-State 82
+State 98
 
-   26 brackstar: brackstar DOUBBRACK .
+   26 exp: exp . relop exp
+   27    | exp . sumop exp
+   28    | exp . proop exp
+   43 explist: explist COMMA exp .
 
-    $default  reduce using rule 26 (brackstar)
+    DEQ    shift, and go to state 45
+    NEQ    shift, and go to state 46
+    LEQ    shift, and go to state 47
+    GEQ    shift, and go to state 48
+    GT     shift, and go to state 49
+    LT     shift, and go to state 50
+    PLUS   shift, and go to state 51
+    MINUS  shift, and go to state 52
+    OR     shift, and go to state 53
+    MULT   shift, and go to state 54
+    DIVD   shift, and go to state 55
+    MOD    shift, and go to state 56
+    AND    shift, and go to state 57
 
+    $default  reduce using rule 43 (explist)
 
-State 83
-
-   16 exp: exp . relop exp
-   17    | exp . sumop exp
-   18    | exp . proop exp
-   33 explist: explist COMMA exp .
-
-    DEQ    shift, and go to state 41
-    NEQ    shift, and go to state 42
-    LEQ    shift, and go to state 43
-    GEQ    shift, and go to state 44
-    GT     shift, and go to state 45
-    LT     shift, and go to state 46
-    PLUS   shift, and go to state 47
-    MINUS  shift, and go to state 48
-    OR     shift, and go to state 49
-    MULT   shift, and go to state 50
-    DIVD   shift, and go to state 51
-    MOD    shift, and go to state 52
-    AND    shift, and go to state 53
-
-    $default  reduce using rule 33 (explist)
-
-    relop  go to state 54
-    sumop  go to state 55
-    proop  go to state 56
+    relop  go to state 58
+    sumop  go to state 59
+    proop  go to state 60
 
 
-State 84
+State 99
 
-   29 expstar: expstar LBRACK exp error .
+   39 expstar: expstar LBRACK exp error .
 
-    $default  reduce using rule 29 (expstar)
+    $default  reduce using rule 39 (expstar)
 
 
-State 85
+State 100
 
-   28 expstar: expstar LBRACK exp RBRACK .
+   38 expstar: expstar LBRACK exp RBRACK .
 
-    $default  reduce using rule 28 (expstar)
+    $default  reduce using rule 38 (expstar)

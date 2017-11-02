@@ -12,8 +12,6 @@
 
 #define COMM 1
 
-#define LBRACE 6
-#define RBRACE 6
 #define DSLASH 6
 
 #define IF 9
@@ -22,7 +20,6 @@
 #define CLASS 9
 #define PRINT 9
 #define WHILE 9
-#define RETURN 9
 
 #define WSPC 10
 #define CHRERR 11
