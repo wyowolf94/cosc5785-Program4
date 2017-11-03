@@ -34,6 +34,7 @@ int main() {
   // Print the Parse Tree
   for(unsigned int i = 0; i < forest.size(); i++) {
     forest[i]->printNode();
+    cout << endl << "***" << endl;
     delete forest[i];
   }
   

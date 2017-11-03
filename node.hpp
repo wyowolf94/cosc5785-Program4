@@ -22,6 +22,7 @@ using std::cout;
 class Node 
 {
   public:
+    vector<Node*> children;
   // Constructor
   Node() {
     reset();
@@ -102,7 +103,6 @@ class Node
     double dval;
     string sval;
 
-    vector<Node*> children;
     bool valid;
 };
 
@@ -146,15 +146,32 @@ class statementNode : public Node
     } 
 
     virtual void printNode(ostream * out = 0) {
-      if(type == "nameeq") {
-        cout << endl << "<Statement> -> <Name> = <Expression> ;" << endl;
+      cout << endl;
+      if(type == "semi") {
+        cout << "<Statement> -> ;" << endl;
+      } else if(type == "nameeq") {
+        cout << "<Statement> -> <Name> = <Expression> ;" << endl;
+        children[0]->printNode();
+        children[1]->printNode();
+      } else if(type == "namearglist") {
+        cout << "<Statement> -> <Name> ( <ArgList> ) ;" << endl;
+        children[0]->printNode();
+        children[1]->printNode();
+      } else if(type == "printarglist") {
+        cout << "<Statement> -> print ( <ArgList> ) ;" << endl;
+        children[0]->printNode();
+      }else if(type == "cond") {
+        cout << "<Statement> -> <ConditionalStatement>" << endl;
+        children[0]->printNode();
+      } else if(type == "while") {
+        cout << "<Statement> -> while ( <Expression> ) <Statement>" << endl;
         children[0]->printNode();
         children[1]->printNode();
       } else if(type == "optexp") {
-        cout << endl << "<Statement> -> return <OptionalExpression> ;" << endl;
+        cout << "<Statement> -> return <OptionalExpression> ;" << endl;
         children[0]->printNode();
       } else if (type == "block") {
-        cout << endl << "<Statement> -> <Block>" << endl;
+        cout << "<Statement> -> <Block>" << endl;
         children[0]->printNode();
       } else {
         cout << endl << "oh no good lord hey kids" << endl;
@@ -164,68 +181,115 @@ class statementNode : public Node
     string type;
 };
 
-// Block Node goes to type identifier semicolon
+// ConditionalStatementNode goes to an if statement or an if-else statement
+class condstatementNode : public Node 
+{
+  public:
+    condstatementNode(string t) : Node () {
+      type = t;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      if(type == "if") {
+        cout << "<ConditionalStatement> -> if ( <Expression> ) <Statement>" << endl;
+        children[0]->printNode();
+        children[1]->printNode();
+      } else if(type == "if-else") {
+        cout << "<ConditionalStatement> -> if ( <Expression> ) <Statement> " 
+             << "else <Statement>" << endl;
+        children[0]->printNode();
+        children[1]->printNode();
+        children[2]->printNode();
+      }
+    }
+  private:
+    string type;
+};
+
+// Block Node goes to any number of vardecs followed by any number of statements
 class blockNode : public Node 
 {
   public:
-    blockNode() : Node () {
-      id = "";
+    blockNode(string t) : Node () {
+      type = t;
     } 
+    
+    void printBlock(string nonterm) {
+        cout << "<Block> -> { ";
+        for(unsigned int i = 0; i < children[0]->children.size(); i++) {
+          cout << "<" << nonterm << "> ";
+        }
+        cout << "}" << endl;
+    }
+    
+    void printBlock() {
+        cout << "<Block> -> { ";
+        for(unsigned int i = 0; i < children[0]->children.size(); i++) {
+          cout << "<LocalVarDec> ";
+        }
+        for(unsigned int i = 0; i < children[1]->children.size(); i++) {
+          cout << "<Statement> ";
+        }
+        cout << "}" << endl;
+    }
+    
+    void printChildren(int index) {
+        for(unsigned int i = 0; i < children[index]->children.size(); i++) {
+          children[index]->children[i]->printNode();
+        }
+    }
 
     virtual void printNode(ostream * out = 0) {
-       cout << "<Block> -> { <LocalVarDecStar> <StateStar> }" << endl;
-       children[0]->printNode();
-       children[1]->printNode();
+      if(type == "empty") {
+        cout << "<Block> -> { }" << endl;
+      } else if (type == "locvardecs") {
+        printBlock("LocalVarDec");
+        printChildren(0);
+      } else if (type == "statements") {
+        printBlock("Statement");
+        printChildren(0);
+      } else if (type == "both") {
+        printBlock();
+        printChildren(0);
+        printChildren(1);
+      } else {
+        cout << "it's going to work out" << endl;
+      }
     }
   private:
-    string id;
+    string type;
 };
 
 // statestar Node with just prints any number of statements
-class statestarNode : public Node 
+class stateplusNode : public Node 
 {
   public:
-    statestarNode(string t) : Node () {
-      type = t;
+    stateplusNode() : Node () {
+      type = "";
     } 
 
     virtual void printNode(ostream * out = 0) {
-      if(type == "empty") {
-        cout << "<StateStar> -> epsilon" << endl;
-      } else if(type == "rec") {
-        cout << "<StateStar> -> <StateStar> <Statement>" << endl;
-        children[0]->printNode();
-        children[1]->printNode();
-      } else {
-        cout << "it's going to be fine" << endl;
-      }
+      // Nothing Prints
     }
   private:
     string type;
 }; 
 
-// LocalVarDecStar Node with just prints any number of locvardecNodes
-class locvardecstarNode : public Node 
+// LocalVarDecStar Node with just print  one or more locvardecNodes
+class locvardecplusNode : public Node 
 {
   public:
-    locvardecstarNode(string t) : Node () {
-      type = t;
+    locvardecplusNode() : Node () {
+      type = "";
     } 
 
     virtual void printNode(ostream * out = 0) {
-      if(type == "empty") {
-        cout << "<LocalVarDecStar> -> epsilon" << endl;
-      } else if(type == "rec") {
-        cout << "<LocalVarDecStar> -> <LocalVarDecStar> <LocalVarDec>" << endl;
-        children[0]->printNode();
-        children[1]->printNode();
-      } else {
-        cout << "definitely going to get this done" << endl;
-      }
+      // Nothing Prints 
     }
   private:
     string type;
 }; 
+
 
 // LocalVarDec Node with just prints type identifier;
 class locvardecNode : public Node 
@@ -236,6 +300,7 @@ class locvardecNode : public Node
     } 
 
     virtual void printNode(ostream * out = 0) {
+      cout << endl;
       cout << "<LocalVarDec> -> <Type> identifier (" << id << ") ;" << endl;
       children[0]->printNode();
     }
@@ -334,18 +399,37 @@ class newexpNode : public Node
       type = t;
       id = i;
     } 
+    
+    void printNewExp() {
+        cout << "<NewExpression> -> <SimpleType> ";
+        for(unsigned int i = 0; i < children[1]->children.size(); i++) {
+          cout << "[<Expression>] ";
+        }
+        for(unsigned int i = 0; i < children[2]->children.size(); i++) {
+          cout << "[] ";
+        }
+        cout << endl;
+    }
+    
+    void printChildren(int index) {
+        for(unsigned int i = 0; i < children[index]->children.size(); i++) {
+          children[index]->children[i]->printNode();
+        }
+    }
 
     virtual void printNode(ostream * out = 0) {
       if(type == "parens") {
         cout << "<NewExpression> -> new identifier (" << id 
              << ") ( <ArgList> )" << endl;
         children[0]->printNode();
-      } else if (type == "bracks") {
-        cout << "<NewExpression> -> new <SimpleType> <expstar> <brackstar> " 
-             << endl;
+      } else if(type == "empty") {
+        cout << "<NewExpression> -> new <SimpleType>" << endl;
         children[0]->printNode();
-        children[1]->printNode();
-        children[2]->printNode();
+      } else if(type == "bracks") {
+        printNewExp();
+        children[0]->printNode();
+        printChildren(1);
+        printChildren(2);
       } else {
         cout << "oh my god holy hell what is happening" << endl;
       }
@@ -355,46 +439,31 @@ class newexpNode : public Node
     string id;
 }; 
 
-// brackstar node because fancy feast
+// brackstar node goes to one or more bracket pairs
 class brackstarNode : public Node 
 {
   public:
-    brackstarNode(string t) : Node () {
-      type = t;
+    brackstarNode() : Node () {
+      type = "";
     } 
 
     virtual void printNode(ostream * out = 0) {
-      if(type == "empty") {
-        cout << "<brackstar> -> epsilon" << endl;
-      } else if (type == "rec") {
-        cout << "<brackstar> -> <brackstar> []" << endl;
-        children[0]->printNode();
-      } else {
-        cout << "los problemos es loco" << endl;
-      }
+      // Don't print anything
     }
   private:
     string type;
 }; 
 
-// expstar node because fancy feast
+// expstar node goes to one or more bracketed expressions
 class expstarNode : public Node 
 {
   public:
-    expstarNode(string t) : Node () {
-      type = t;
+    expstarNode() : Node () {
+      type = "";
     } 
 
     virtual void printNode(ostream * out = 0) {
-      if(type == "empty") {
-        cout << "<expstar> -> epsilon" << endl;
-      } else if (type == "rec") {
-        cout << "<expstar> -> <expstar> [<Expression>]" << endl;
-        children[0]->printNode();
-        children[1]->printNode();
-      } else {
-        cout << "panic" << endl;
-      }
+      // Don't print anything
     }
   private:
     string type;

@@ -1,0 +1,171 @@
+newexp : NEW IDEN LPAREN arglist RPAREN 
+           {$$ = new newexpNode("parens", $2->value);
+            $$->addChild($4);
+            delete $1;
+            delete $2;
+            delete $3;
+            delete $5;}
+       | NEW IDEN LPAREN arglist error 
+           {cerr << "Missing ')' after type: line " << $1->lNum << endl << endl;
+            $$ = new errorNode("<NewExpression>");
+            $$->addChild($4);
+            $$->setValid(false);
+            delete $1;
+            delete $3;
+            yyerrok;}
+       | NEW simpleType
+           {$$ = new newexpNode("empty");
+            $$->addChild($2);
+            delete $1;}
+       | NEW simpleType expplus
+           {$$ = new newexpNode("exps");
+            if(!$3->getValid()) {
+              $$->setValid(false);
+            }
+            $$->addChild($2);
+            $$->addChild($3);
+            delete $1;}
+       | NEW simpleType brackplus
+           {$$ = new newexpNode("bracks");
+            $$->addChild($2);
+            $$->addChild($3);
+            delete $1;}
+       | NEW simpleType expplus brackplus
+           {$$ = new newexpNode("both");
+            if(!$3->getValid()) {
+              $$->setValid(false);
+            }
+            $$->addChild($2); 
+            $$->addChild($3);
+            $$->addChild($4);
+            delete $1;}
+       ;
+           
+brackplus : DOUBBRACK
+              {$$ = new brackplusNode();
+               $$->addChild(new brackplusNode());
+               delete $1;}
+          | brackplus DOUBBRACK
+              {$$ = new brackplusNode();
+               $1->addChild(new brackplusNode());
+               $$ = $1;
+               delete $2;}
+          ;
+          
+expplus : exp
+            {$$ = new expplusNode();
+             $$->addChild($1);}
+        | expplus LBRACK exp RBRACK 
+            {$$ = new expplusNode();
+             $1->addChild($3);
+             $$ = $1;
+             delete $2;
+             delete $4;}
+        | expplus LBRACK exp error
+            {cerr << "Missing ']' after expression: line " << $2->lNum << endl << endl;
+             $$ = new errorNode("<expstar>");
+             $$->addChild($1);
+             $$->addChild($3);
+             $$->setValid(false);
+             $1->setValid(false);
+             $3->setValid(false);
+             delete $2;
+             yyerrok;}
+        ;
+        
+        
+        // NewExpression node 
+class newexpNode : public Node 
+{
+  public:
+    newexpNode(string t) : Node () {
+      type = t;
+      id = "";
+    }
+    
+    newexpNode(string t, string i) : Node () {
+      type = t;
+      id = i;
+    } 
+    
+    void printNewExp(string nonterm) {
+        cout << "<NewExpression> -> { ";
+        for(unsigned int i = 0; i < children[0]->children.size(); i++) {
+          cout << "[" << nonterm << "] ";
+        }
+        cout << "}" << endl;
+    }
+    
+    void printNewExp() {
+        cout << "<NewExpression> -> { ";
+        for(unsigned int i = 0; i < children[0]->children.size(); i++) {
+          cout << "[<Expression>] ";
+        }
+        for(unsigned int i = 0; i < children[1]->children.size(); i++) {
+          cout << "[] ";
+        }
+        cout << "}" << endl;
+    }
+    
+    void printChildren(int index) {
+        for(unsigned int i = 0; i < children[index]->children.size(); i++) {
+          children[index]->children[i]->printNode();
+        }
+    }
+
+    virtual void printNode(ostream * out = 0) {
+      if(type == "parens") {
+        cout << "<NewExpression> -> new identifier (" << id 
+             << ") ( <ArgList> )" << endl;
+        children[0]->printNode();
+      } else if(type == "empty") {
+        cout << "<NewExpression> -> new <SimpleType>" << endl;
+        children[0]->printNode();
+      } else if(type == "exps") {
+        printNewExp("<Expression>");
+        printChildren(0);
+      } else if(type == "bracks") {
+        printNewExp("");
+        printChildren(0);
+      } else if (type == "both") {
+        printNewExp();
+        printChildren(0);
+        printChildren(1);
+      } else {
+        cout << "oh my god holy hell what is happening" << endl;
+      }
+    }
+  private:
+    string type;
+    string id;
+}; 
+
+// brackplus node goes to one or more bracket pairs
+class brackplusNode : public Node 
+{
+  public:
+    brackplusNode() : Node () {
+      type = "";
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      // Don't print anything
+    }
+  private:
+    string type;
+}; 
+
+// expplus node goes to one or more bracketed expressions
+class expplusNode : public Node 
+{
+  public:
+    expplusNode() : Node () {
+      type = "";
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      // Don't print anything
+    }
+  private:
+    string type;
+}; 

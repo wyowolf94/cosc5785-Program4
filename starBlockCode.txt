@@ -1,0 +1,87 @@
+
+block : LBRACE locvardecstar statestar RBRACE 
+          {$$ = new blockNode();
+           $$->addChild($2);
+           $$->addChild($3);
+           delete $1;
+           delete $4;}
+      ;
+
+statestar : %empty
+              {$$ = new statestarNode("empty");}
+          | statestar statement
+              {$$ = new statestarNode("rec");
+               $$->addChild($1);
+               $$->addChild($2);}
+          ;
+           
+locvardecstar : %empty
+                  {$$ = new locvardecstarNode("empty");}
+              | locvardecstar locvardec
+                  {$$ = new locvardecstarNode("rec");
+                   $$->addChild($1);
+                   $$->addChild($2);}
+              ;
+
+// Block Node goes to type identifier semicolon
+class blockNode : public Node 
+{
+  public:
+    blockNode() : Node () {
+      id = "";
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+       cout << "<Block> -> { <LocalVarDecStar> <StateStar> }" << endl;
+       children[0]->printNode();
+       children[1]->printNode();
+    }
+  private:
+    string id;
+};
+
+// statestar Node with just prints any number of statements
+class statestarNode : public Node 
+{
+  public:
+    statestarNode(string t) : Node () {
+      type = t;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      if(type == "empty") {
+        cout << "<StateStar> -> epsilon" << endl;
+      } else if(type == "rec") {
+        cout << "<StateStar> -> <StateStar> <Statement>" << endl;
+        children[0]->printNode();
+        children[1]->printNode();
+      } else {
+        cout << "it's going to be fine" << endl;
+      }
+    }
+  private:
+    string type;
+}; 
+
+// LocalVarDecStar Node with just prints any number of locvardecNodes
+class locvardecstarNode : public Node 
+{
+  public:
+    locvardecstarNode(string t) : Node () {
+      type = t;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      if(type == "empty") {
+        cout << "<LocalVarDecStar> -> epsilon" << endl;
+      } else if(type == "rec") {
+        cout << "<LocalVarDecStar> -> <LocalVarDecStar> <LocalVarDec>" << endl;
+        children[0]->printNode();
+        children[1]->printNode();
+      } else {
+        cout << "definitely going to get this done" << endl;
+      }
+    }
+  private:
+    string type;
+}; 

@@ -39,7 +39,8 @@ void yyerror(const char *);
 %type<ttype> statement optexp
 %type<ttype> elem 
 %type<ttype> simpleType type varDec 
-%type<ttype> locvardec locvardecstar statestar block 
+%type<ttype> condstatement
+%type<ttype> locvardec block stateplus locvardecplus
 %type<ttype> exp name newexp expstar brackstar
 %type<ttype> explist arglist
 %type<ttype> relop sumop proop unyop
@@ -49,20 +50,21 @@ void yyerror(const char *);
 %token<atts> LBRACE RBRACE
 %token<atts> INT IDEN 
 %token<atts> NUM NLL READ NEW LPAREN RPAREN
+%token<atts> IF ELSE
 
 %token<atts> DEQ NEQ LEQ GEQ GT LT 
 %token<atts> PLUS MINUS OR
 %token<atts> MULT DIVD MOD AND
 %token<atts> BANG
-%token<atts> SEMI EQ COMMA RETURN
-
-//%precedence EXP
+%token<atts> SEMI EQ COMMA RETURN WHILE PRINT
 
 %left DEQ NEQ LEQ GEQ GT LT RO
 %left PLUS MINUS OR SO
 %left MULT DIVD MOD AND PO
 
 %precedence UO
+%precedence DE
+%precedence ELSE
 
 %% 
 
@@ -77,7 +79,10 @@ elem : statement {}
      | varDec {}
      ;
 
-statement : name EQ exp SEMI 
+statement : SEMI
+              {$$ = new statementNode("semi");
+               delete $1;}
+          |name EQ exp SEMI 
               {$$ = new statementNode("nameeq");
                if(!$1->getValid() || !$3->getValid()) {
                  $$->setValid(false);
@@ -94,38 +99,96 @@ statement : name EQ exp SEMI
                $$->addChild($3);
                delete $2;
                yyerrok;}
-           | RETURN optexp SEMI
-               {$$ = new statementNode("optexp");
-                $$->addChild($2);
-                delete $1;
-                delete $3;}
-           | block
-               {$$ = new statementNode("block");
-                $$->addChild($1);}
-           ; 
+          | name LPAREN arglist RPAREN SEMI
+              {$$ = new statementNode("namearglist");
+               $$->addChild($1);
+               $$->addChild($3);
+               delete $2;
+               delete $4;
+               delete $5;}
+          | PRINT LPAREN arglist RPAREN SEMI
+              {$$ = new statementNode("printarglist");
+               $$->addChild($3);
+               delete $1;
+               delete $2;
+               delete $4;
+               delete $5;}
+          | condstatement
+              {$$ = new statementNode("cond");
+               $$->addChild($1);}
+          | WHILE LPAREN exp RPAREN statement
+              {$$ = new statementNode("while");
+               $$->addChild($3);
+               $$->addChild($5);
+               delete $1;
+               delete $2;
+               delete $4;}
+          | RETURN optexp SEMI
+              {$$ = new statementNode("optexp");
+               $$->addChild($2);
+               delete $1;
+               delete $3;}
+          | block
+              {$$ = new statementNode("block");
+               $$->addChild($1);}
+          ; 
            
-block : LBRACE locvardecstar statestar RBRACE 
-          {$$ = new blockNode();
+condstatement : IF LPAREN exp RPAREN statement %prec DE
+                  {$$ = new condstatementNode("if");
+                   $$->addChild($3);
+                   $$->addChild($5);
+                   delete $1;
+                   delete $2;
+                   delete $4;}
+              | IF LPAREN exp RPAREN statement ELSE statement 
+                  {$$ = new condstatementNode("if-else");
+                   $$->addChild($3);
+                   $$->addChild($5);
+                   $$->addChild($7);
+                   delete $1;
+                   delete $2;
+                   delete $4;
+                   delete $6;}
+              ;
+           
+block : LBRACE RBRACE
+          {$$ = new blockNode("empty");
+           delete $1;
+           delete $2;}
+      | LBRACE locvardecplus RBRACE
+          {$$ = new blockNode("locvardecs");
+           $$->addChild($2);
+           delete $1;
+           delete $3;}
+      | LBRACE stateplus RBRACE
+          {$$ = new blockNode("statements");
+           $$->addChild($2);
+           delete $1;
+           delete $3;}
+      | LBRACE locvardecplus stateplus RBRACE
+          {$$ = new blockNode("both");
            $$->addChild($2);
            $$->addChild($3);
            delete $1;
            delete $4;}
       ;
-
-statestar : %empty
-              {$$ = new statestarNode("empty");}
-          | statestar statement
-              {$$ = new statestarNode("rec");
-               $$->addChild($1);
-               $$->addChild($2);}
+           
+stateplus : statement
+              {$$ = new stateplusNode();
+               $$->addChild($1);}
+          | stateplus statement
+              {$$ = new stateplusNode();
+               $1->addChild($2);
+               $$ = $1;}
           ;
            
-locvardecstar : %empty
-                  {$$ = new locvardecstarNode("empty");}
-              | locvardecstar locvardec
-                  {$$ = new locvardecstarNode("rec");
-                   $$->addChild($1);
-                   $$->addChild($2);}
+locvardecplus : locvardec
+                  {$$ = new locvardecplusNode();
+                   $$->addChild($1);}
+              | locvardecplus locvardec
+                  {$$ = new locvardecplusNode();
+                   $1->addChild($2);
+                   $$ = $1;}
               ;
            
 locvardec : type IDEN SEMI 
@@ -248,19 +311,20 @@ newexp : NEW IDEN LPAREN arglist RPAREN
        ;
            
 brackstar : %empty
-              {$$ = new brackstarNode("empty");}
+              {$$ = new brackstarNode();}
           | brackstar DOUBBRACK
-              {$$ = new brackstarNode("rec");
-               $$->addChild($1);
+              {$$ = new brackstarNode();
+               $1->addChild(new brackstarNode());
+               $$ = $1;
                delete $2;}
           ;
           
 expstar : %empty
-            {$$ = new expstarNode("empty");}
+            {$$ = new expstarNode();}
         | expstar LBRACK exp RBRACK 
-            {$$ = new expstarNode("rec");
-             $$->addChild($1);
-             $$->addChild($3);
+            {$$ = new expstarNode();
+             $1->addChild($3);
+             $$ = $1;
              delete $2;
              delete $4;}
         | expstar LBRACK exp error
@@ -274,7 +338,7 @@ expstar : %empty
              delete $2;
              yyerrok;}
         ;
-        
+    
 arglist : %empty
             {$$ = new arglistNode("empty");}
         | explist
