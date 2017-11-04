@@ -1,0 +1,56 @@
+Shaya Wolf
+cosc 5785
+Program 4
+11/1/2017
+
+Error Productions/Explanations
+
+When an error is encountered, cerr is used to output a message after bison
+prints "---Syntax Error---". Then, it continues to add children, but it marks
+everything from that node to the root as invalid. So if you have 8 varDecs 
+and 1 of them is invalid, the program is invalid, but the 7 other varDecs are
+still valid. I don't do very much with opening parens/brackets/braces because
+they are famous for creating shift-reduce errors in mass. 
+
+I tried to focus on the bigger terms
+  1 - Variable Declaration
+      -> Missing ';' after identifier
+  2 - Constructor Declaration
+      -> Incorrect symbol where there should be a left paren
+      -> Incorrect symbol where there should be a right paren
+  3 - Method Declaration
+      -> Missing right paren after paramlist
+      
+Then went for the second-tier terms
+  1 - Statement
+      -> Missing ';' after expression
+      -> Missing ';' after name dec with paramlist
+      -> Missing ')' after paramlist in name dec
+      -> Missing ';' after print statement
+      -> Missing ')' after arglist for printstatement
+      -> Missing ')' after while expression in statement
+      -> Missing ';' after return statement
+  2 - Local Variable Declaration
+      -> Missing ';' after local variable identifier
+  3 - Block
+      -> Covered by taking care of statement and LocalVarDec
+  4 - Expression
+      -> Missing ')' after name declaration
+      -> Missing ')' after read
+      -> Missing '(' after read
+      -> Missing ')' after expression
+      
+Then went for the third-tier
+  1 - Conditional Statement 
+      -> Missing ')' after expression in conditional statement 
+         (with and without else)
+  2 - New Expression
+      -> Missing ')' after arglist for new expression
+      -> Missing ']' after new expression
+  3 - Name
+      -> Missing ']' after name
+      
+Between these errors and the errors I carried over from the previous program
+(tier 3 and expression), the bases all seemed to be adequately covered. Much 
+more than this and it would have been much too cluttered and defeated it's 
+own purpose for clearly dictating errors. 
