@@ -55,3 +55,30 @@ class name {
   iden4(type1 iden1, int iden2){x=5;}
   rtype4 iden4(type1 iden1, int iden2){x=5;}
 }
+
+class iden1 {
+  int[] iden2;
+  iden2( t1 id1 ) {
+    type2 iden3;
+    name (new int[5][9+2][], null, 5+6-9);
+    if(read()) return this.iden;
+    else {}
+  }
+  type3 iden4 ( t1 id1, t2 id2, t3 id3) {
+    ;
+    while(this.iden1.iden2) print();
+  }
+}
+
+#include
+
+class iden5 {
+  iden6[][] iden7;
+  iden8(){}
+  void iden9 () {
+    name[4+5] = 3 * 5 + 4;
+    while(1) {
+      return;
+    }
+  }
+}

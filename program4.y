@@ -490,8 +490,9 @@ name : THIS
           delete $2;
           delete $3;} 
      | name LBRACK exp RBRACK 
-         {$1->addChild($3);
-          $$ = $1;
+         {$$ = new nameNode("exp", "");
+          $$->addChild($1);
+          $$->addChild($3);
           delete $2;
           delete $4;}
      | name LBRACK exp error

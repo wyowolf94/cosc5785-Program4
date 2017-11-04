@@ -571,7 +571,7 @@ class newexpNode : public Node
     } 
     
     void printNewExp() {
-        cout << "<NewExpression> -> <SimpleType> ";
+        cout << "<NewExpression> -> new <SimpleType> ";
         for(unsigned int i = 0; i < children[1]->children.size(); i++) {
           cout << "[<Expression>] ";
         }
