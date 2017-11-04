@@ -13,10 +13,9 @@
 #include "node.hpp"
 #include "attributes.h"
 
-using namespace std;
-//using std::cerr;
-//using std::cout;
-//using std::endl;
+using std::cerr;
+using std::cout;
+using std::endl;
 
 // externs defined in program3.cpp 
 extern vector<Node*> forest;
@@ -36,11 +35,13 @@ void yyerror(const char *);
 }
 // Bison Declarations
 
-%type<ttype> elem 
+%type<ttype> program 
+%type<ttype> classdec
+%type<ttype> classbody vardecplus constdecplus methdecplus 
 %type<ttype> param paramstar paramlist
-%type<ttype> resulttype methoddec constdec
+%type<ttype> methoddec constdec
 %type<ttype> statement optexp
-%type<ttype> simpleType type varDec 
+%type<ttype> simpleType type vardec 
 %type<ttype> condstatement
 %type<ttype> locvardec block stateplus locvardecplus
 %type<ttype> exp name newexp expstar brackstar
@@ -59,7 +60,7 @@ void yyerror(const char *);
 %token<atts> MULT DIVD MOD AND
 %token<atts> BANG
 %token<atts> SEMI EQ COMMA RETURN WHILE PRINT
-%token<atts> VOID
+%token<atts> VOID CLASS
 
 %left DEQ NEQ LEQ GEQ GT LT RO
 %left PLUS MINUS OR SO
@@ -68,28 +69,92 @@ void yyerror(const char *);
 %precedence UO
 %precedence DE
 %precedence ELSE
-//%precedence PRMTR
-//%precedence SEMI
-%precedence RT
-%precedence IDEN
-%precedence NM
-%precedence LPAREN
 
 
 %% 
-
-// Bison Grammar
-
-start : %empty {}
-      | start elem {if($2->getValid()) forest.push_back($2);
-                    else delete $2;}
-      ;
-
-elem : statement {}
-     | varDec {}
-     | methoddec {}
-     | constdec {}
-     ;
+  
+program : classdec
+            {forest.push_back($1);}
+        | program classdec
+            {forest.push_back($2);}
+        ;
+   
+classdec : CLASS IDEN classbody
+             {$$ = new classdecNode($2->value);
+              $$->addChild($3);
+              delete $1;
+              delete $2;}
+         ;
+   
+classbody : LBRACE RBRACE 
+              {$$ = new classbodyNode("empty");
+               delete $1;
+               delete $2;}
+          | LBRACE vardecplus RBRACE 
+              {$$ = new classbodyNode("vdecs");
+               $$->addChild($2);
+               delete $1;
+               delete $3;}
+          | LBRACE constdecplus RBRACE 
+              {$$ = new classbodyNode("cdecs");
+               $$->addChild($2);
+               delete $1;
+               delete $3;}
+          | LBRACE methdecplus RBRACE 
+              {$$ = new classbodyNode("mdecs");
+               $$->addChild($2);
+               delete $1;
+               delete $3;}
+          | LBRACE vardecplus constdecplus RBRACE 
+              {$$ = new classbodyNode("vcdecs");
+               $$->addChild($2);
+               $$->addChild($3);
+               delete $1;
+               delete $4;}
+          | LBRACE vardecplus methdecplus RBRACE 
+              {$$ = new classbodyNode("vmdecs");
+               $$->addChild($2);
+               $$->addChild($3);
+               delete $1;
+               delete $4;}
+          | LBRACE constdecplus methdecplus RBRACE 
+              {$$ = new classbodyNode("cmdecs");
+               $$->addChild($2);
+               $$->addChild($3);
+               delete $1;
+               delete $4;}
+          | LBRACE vardecplus constdecplus methdecplus RBRACE 
+              {$$ = new classbodyNode("vcmdecs");
+               $$->addChild($2);
+               $$->addChild($3);
+               $$->addChild($4);
+               delete $1;
+               delete $5;}
+          ;
+          
+methdecplus : methoddec 
+                {$$ = new plusstarNode();
+                 $$->addChild($1);}
+            | methdecplus methoddec 
+                {$1->addChild($2);
+                 $$ = $1;}
+            ;
+            
+constdecplus : constdec 
+                 {$$ = new plusstarNode();
+                  $$->addChild($1);}
+             | constdecplus constdec 
+                 {$1->addChild($2);
+                  $$ = $1;}
+             ;
+             
+vardecplus : vardec 
+               {$$ = new plusstarNode();
+                $$->addChild($1);}
+           | vardecplus vardec 
+               {$1->addChild($2);
+                $$ = $1;}
+           ;
      
 constdec : IDEN LPAREN paramlist RPAREN block
              {$$ = new constdecNode($1->value);
@@ -100,23 +165,23 @@ constdec : IDEN LPAREN paramlist RPAREN block
               delete $4;}
          ;
      
-methoddec : resulttype IDEN LPAREN paramlist RPAREN block
-              {$$ = new methoddecNode($2->value);
+methoddec : type IDEN LPAREN paramlist RPAREN block
+              {$$ = new methoddecNode("type", $2->value);
                $$->addChild($1);
                $$->addChild($4);
                $$->addChild($6);
                delete $2;
                delete $3;
                delete $5;}
+          | VOID IDEN LPAREN paramlist RPAREN block
+              {$$ = new methoddecNode("void", $2->value);
+               $$->addChild($4);
+               $$->addChild($6);
+               delete $1;
+               delete $2;
+               delete $3;
+               delete $5;}
           ;
-     
-resulttype : type %prec RT
-               {$$ = new resulttypeNode("type");
-                $$->addChild($1);}
-           | VOID
-               {$$ = new resulttypeNode("void");
-                delete $1;}
-           ;
      
 paramlist : %empty
               {$$ = new paramlistNode("empty");}
@@ -126,16 +191,15 @@ paramlist : %empty
           ;
      
 paramstar : param 
-              {$$ = new paramstarNode();
+              {$$ = new plusstarNode();
                $$->addChild($1);}
           | paramstar COMMA param
-              {$$ = new paramstarNode();
-               $1->addChild($3);
+              {$1->addChild($3);
                $$ = $1;
                delete $2;}
           ;
      
-param : type IDEN //%prec PRMTR
+param : type IDEN 
           {$$ = new paramNode($2->value);
            $$->addChild($1);
            delete $2;}
@@ -236,20 +300,18 @@ block : LBRACE RBRACE
       ;
            
 stateplus : statement
-              {$$ = new stateplusNode();
+              {$$ = new plusstarNode();
                $$->addChild($1);}
           | stateplus statement
-              {$$ = new stateplusNode();
-               $1->addChild($2);
+              {$1->addChild($2);
                $$ = $1;}
           ;
            
 locvardecplus : locvardec
-                  {$$ = new locvardecplusNode();
+                  {$$ = new plusstarNode();
                    $$->addChild($1);}
               | locvardecplus locvardec
-                  {$$ = new locvardecplusNode();
-                   $1->addChild($2);
+                  {$1->addChild($2);
                    $$ = $1;}
               ;
            
@@ -374,19 +436,17 @@ newexp : NEW IDEN LPAREN arglist RPAREN
        ;
            
 brackstar : %empty
-              {$$ = new brackstarNode();}
+              {$$ = new plusstarNode();}
           | brackstar DOUBBRACK
-              {$$ = new brackstarNode();
-               $1->addChild(new brackstarNode());
+              {$1->addChild(new plusstarNode());
                $$ = $1;
                delete $2;}
           ;
           
 expstar : %empty
-            {$$ = new expstarNode();}
+            {$$ = new plusstarNode();}
         | expstar LBRACK exp RBRACK 
-            {$$ = new expstarNode();
-             $1->addChild($3);
+            {$1->addChild($3);
              $$ = $1;
              delete $2;
              delete $4;}
@@ -410,11 +470,10 @@ arglist : %empty
         ;
   
 explist : exp 
-            {$$ = new explistNode();
+            {$$ = new plusstarNode();
              $$->addChild($1);} 
         | explist COMMA exp 
-            {$$ = new explistNode();
-             $1->addChild($3);
+            {$1->addChild($3);
              $$ = $1;
              delete $2;}
         ;
@@ -422,7 +481,7 @@ explist : exp
 name : THIS  
          {$$ = new nameNode("this", "");
           delete $1;}
-     | IDEN %prec NM
+     | IDEN 
          {$$ = new nameNode("id", $1->value);
           delete $1;}
      | name DOT IDEN 
@@ -431,8 +490,7 @@ name : THIS
           delete $2;
           delete $3;} 
      | name LBRACK exp RBRACK 
-         {$$ = new nameNode("exp", "");
-          $1->addChild($3);
+         {$1->addChild($3);
           $$ = $1;
           delete $2;
           delete $4;}
@@ -446,7 +504,7 @@ name : THIS
           yyerrok;}        
      ;
      
-varDec : type IDEN SEMI  {$$ = new varDecNode($2->value);
+vardec : type IDEN SEMI  {$$ = new varDecNode($2->value);
                           $$->addChild($1);
                           delete $2;
                           delete $3;}

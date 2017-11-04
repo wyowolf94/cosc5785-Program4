@@ -33,9 +33,6 @@ class Node
 
   // Destructor
   virtual ~Node() {
-    //while(!children.empty()) {
-      //children.pop_back();
-    //}
     for(unsigned int i = 0; i < children.size(); i++) {
       delete children[i]; 
     }
@@ -106,21 +103,7 @@ class Node
     bool valid;
 };
 
-// Node Types ////////////////////////////////////////////
-class nodeClass : public Node 
-{
-  public:
-    nodeClass(string t) : Node () {
-      type = t;
-    } 
-
-    virtual void printNode(ostream * out = 0) {
-      // Some stuff
-    }
-  private:
-    string type;
-}; 
-/////////// inheritence template //////////////////////////
+///////////////////////////////////////////////////////////////////////////////////
 
 // Node used for all errors so far
 class errorNode : public Node 
@@ -137,6 +120,120 @@ class errorNode : public Node
     string errorRed;
 }; 
 
+// plusstar used for the place-holder nodes that don't print anything
+class plusstarNode : public Node 
+{
+  public:
+    plusstarNode() : Node () {
+      // Nada
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      // Don't print anything
+    }
+}; 
+
+// classdecNode that goes to class iden classbody
+class classdecNode : public Node 
+{
+  public:
+    classdecNode(string i) : Node () {
+      id = i;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      cout << endl << "<ClassDec> -> class identifier (" << id << ") <ClassBody>" << endl;
+      children[0]->printNode();
+    }
+  private:
+    string id;
+}; 
+
+// classbodyNode that goes to { vardecs constdecs methdecs }
+class classbodyNode : public Node 
+{
+  public:
+    classbodyNode(string t) : Node () {
+      type = t;
+    } 
+
+    void printClassBody(string nonterm) {
+        cout << "<ClassBody> -> { ";
+        for(unsigned int i = 0; i < children[0]->children.size(); i++) {
+          cout << "<" << nonterm << "> ";
+        }
+        cout << "}" << endl;
+    }
+    
+    void printClassBody(string ntone, string nttwo) {
+        cout << "<ClassBody> -> { ";
+        for(unsigned int i = 0; i < children[0]->children.size(); i++) {
+          cout << "<" << ntone << "> ";
+        }
+        for(unsigned int i = 0; i < children[1]->children.size(); i++) {
+          cout << "<" << nttwo << "> ";
+        }
+        cout << "}" << endl;
+    }
+    
+    void printClassBody() {
+        cout << "<ClassBody> -> { ";
+        for(unsigned int i = 0; i < children[0]->children.size(); i++) {
+          cout << "<VarDec> ";
+        }
+        for(unsigned int i = 0; i < children[1]->children.size(); i++) {
+          cout << "<ConstDec> ";
+        }
+        for(unsigned int i = 0; i < children[2]->children.size(); i++) {
+          cout << "<MethDec> ";
+        }
+        cout << "}" << endl;
+    }
+    
+    void printChildren(int index) {
+        for(unsigned int i = 0; i < children[index]->children.size(); i++) {
+          children[index]->children[i]->printNode();
+        }
+    }
+
+    virtual void printNode(ostream * out = 0) {
+      if(type == "empty") {
+        cout << "<ClassBody> -> { }" << endl;
+      } else if (type == "vdecs") {
+        printClassBody("VarDec");
+        printChildren(0);
+      } else if (type == "cdecs") {
+        printClassBody("ConstDec");
+        printChildren(0);
+      } else if (type == "mdecs") {
+        printClassBody("MethDec");
+        printChildren(0);
+      } else if (type == "vcdecs") {
+        printClassBody("VarDec", "ConstDec");
+        printChildren(0);
+        printChildren(1);
+      } else if (type == "cmdecs") {
+        printClassBody("ConstDec", "MethDec");
+        printChildren(0);
+        printChildren(1);
+      } else if (type == "vmdecs") {
+        printClassBody("VarDec", "MethDec");
+        printChildren(0);
+        printChildren(1);
+      } else if (type == "vcmdecs") {
+        printClassBody();
+        printChildren(0);
+        printChildren(1);
+        printChildren(2);
+      } else {
+        cout << "classbody problem" << endl;
+      }
+    }
+    
+  private:
+    string type;
+}; 
+
 // Constructor Declaration node that goes to iden ( paramlist ) block
 class constdecNode : public Node 
 {
@@ -146,7 +243,7 @@ class constdecNode : public Node
     } 
 
     virtual void printNode(ostream * out = 0) {
-      cout << endl << "<ConstructorDeclaration> -> identifier (" << id
+      cout << endl << "<ConstDec> -> identifier (" << id
            << ") ( <ParameterList> ) <Block>" << endl;
       children[0]->printNode();
       children[1]->printNode();
@@ -159,42 +256,32 @@ class constdecNode : public Node
 class methoddecNode : public Node 
 {
   public:
-    methoddecNode(string i) : Node () {
+    methoddecNode(string t, string i) : Node () {
+      type = t;
       id = i;
     } 
 
     virtual void printNode(ostream * out = 0) {
-      cout << "<MethodDeclaration> -> <ResultType> identifier (" << id
-           << ") ( <ParameterList> ) <Block>" << endl;
-      children[0]->printNode();
-      children[1]->printNode();
-      children[2]->printNode();
-    }
-  private:
-    string id;
-}; 
-
-// resulttype node that goes to typeNode or token void
-class resulttypeNode : public Node 
-{
-  public:
-    resulttypeNode(string t) : Node () {
-      type = t;
-    } 
-
-    virtual void printNode(ostream * out = 0) {
       if(type == "type") {
-        cout << "<ResultType> -> <Type>" << endl;
+        cout << endl << "<MethDec> -> <Type> identifier (" << id
+             << ") ( <ParameterList> ) <Block>" << endl;
         children[0]->printNode();
+        children[1]->printNode();
+        children[2]->printNode();
       } else if(type == "void") {
-        cout << "<ResultType> -> void" << endl;
+        cout << endl << "<MethDec> -> void identifier (" << id
+             << ") ( <ParameterList> ) <Block>" << endl;
+        children[0]->printNode();
+        children[1]->printNode();
       } else {
-        cout << "resulttype problem" << endl;
+        cout << "methdec problem" << endl;
       }
+      
     }
   private:
     string type;
-};
+    string id;
+}; 
 
 // paramlistNode that goes to empty or a paramstarNode
 class paramlistNode : public Node 
@@ -230,19 +317,6 @@ class paramlistNode : public Node
     }
   private:
     string type;
-}; 
-
-// paramstarNode that goes to one or more comma separated parameters
-class paramstarNode : public Node 
-{
-  public:
-    paramstarNode() : Node () {
-      // Nada
-    } 
-
-    virtual void printNode(ostream * out = 0) {
-      // Don't print anything
-    }
 }; 
 
 // param node which just goes to a type identifier
@@ -386,37 +460,6 @@ class blockNode : public Node
   private:
     string type;
 };
-
-// statestar Node with just prints any number of statements
-class stateplusNode : public Node 
-{
-  public:
-    stateplusNode() : Node () {
-      type = "";
-    } 
-
-    virtual void printNode(ostream * out = 0) {
-      // Nothing Prints
-    }
-  private:
-    string type;
-}; 
-
-// LocalVarDecStar Node with just print  one or more locvardecNodes
-class locvardecplusNode : public Node 
-{
-  public:
-    locvardecplusNode() : Node () {
-      type = "";
-    } 
-
-    virtual void printNode(ostream * out = 0) {
-      // Nothing Prints 
-    }
-  private:
-    string type;
-}; 
-
 
 // LocalVarDec Node with just prints type identifier;
 class locvardecNode : public Node 
@@ -566,36 +609,6 @@ class newexpNode : public Node
     string id;
 }; 
 
-// brackstar node goes to one or more bracket pairs
-class brackstarNode : public Node 
-{
-  public:
-    brackstarNode() : Node () {
-      type = "";
-    } 
-
-    virtual void printNode(ostream * out = 0) {
-      // Don't print anything
-    }
-  private:
-    string type;
-}; 
-
-// expstar node goes to one or more bracketed expressions
-class expstarNode : public Node 
-{
-  public:
-    expstarNode() : Node () {
-      type = "";
-    } 
-
-    virtual void printNode(ostream * out = 0) {
-      // Don't print anything
-    }
-  private:
-    string type;
-}; 
-
 // argList node that either prints to epsilon or to expList
 class arglistNode : public Node 
 {
@@ -627,21 +640,6 @@ class arglistNode : public Node
       } else {
         cout << "arglist problem" << endl;
       }
-    }
-  private:
-    string type;
-}; 
-
-// expList Node that builds comma-separated lists of expressions
-class explistNode : public Node 
-{
-  public:
-    explistNode() : Node () {
-      type = "";
-    } 
-    
-    virtual void printNode(ostream * out = 0) {
-      // Don't print anything
     }
   private:
     string type;
@@ -687,7 +685,7 @@ class varDecNode : public Node
     } 
 
     virtual void printNode(ostream * out = 0) {
-      cout << endl << "<VarDeclaration> -> <Type> identifier (" 
+      cout << endl << "<VarDec> -> <Type> identifier (" 
            << identifier << ") semi" << endl;
       children[0]->printNode();
     }

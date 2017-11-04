@@ -1,89 +1,57 @@
-//// Var Declarations ////
-// Type identifier semi
+/* Test 
+ * Multiline
+ * Comments */
 
-// Type -> SimpleType | Type[]
-int something;
-int something
-int[] somethingelse;
+// Test single line comments
 
-// Some lex error
-#include
+class name {}
 
-// SimpleType -> int | identifier
-type something;
-type[] somethingelse;
-type[][] otherthing;
+class name {
+  int iden1;
+  type iden2;
+}
 
-//// Statements ////
-// Name = Expression;
+class name {
+  iden2(type1 iden1, int iden2){}
+  iden3(){x=+5;}
+}
 
-// Name -> this | identifier | Name.identifier | Name [Expression]
-this = 9;
-name = 9
-some = 9;
-this.some = 9;
-this[9] = 0;
-this[9 = 0;
-this.some[9] = 0;
+class name {
+  rtype1 iden1(){}
+  rtype4 iden4(type1 iden1, int iden2){x=-5;}
+}
 
-/* 
-Expression -> Name | number | null | Name() | read() | (Expression) 
-            | NewExpression | UOP Expression | Expression ROP Expression 
-            | Expression SOP Expression | Expression POP Expression
-*/
-name = some;
-name = 9;
-name = null;
+class name {
+  type iden2;
+  iden1(){}
+  iden4(type1 iden1, int iden2){x=!5;}
+}
 
-name = other();
-name = other(;
-//name = other);
+class name {
+  int iden1;
+  rtype2 iden2(type1 iden1, int iden2){}
+  rtype3 iden3(){x=5;}
+}
 
-name = read();
-name = read(;
-name = read);
+class name {
+  iden1(){}
+  iden2(type1 iden1, int iden2){}
+  rtype2 iden2(type1 iden1, int iden2){}
+  rtype3 iden3(){x=5+6%8;}
+  rtype4 iden4(type1 iden1, int iden2){x=5-6*2;}
+}
 
-name = (some);
-name = (some;
-name = (9+4);
-name = (null);
-name = (read());
-name = (other());
+class name {
+  int iden1;
+  iden3(){this=5;}
+  iden4(type1 iden1, int iden2){return;}
+  rtype1 iden1(){}
+  rtype4 iden4(type1 iden1, int iden2){x=5;}
+}
 
-// NewExpression -> new SimpleType() | new SimpleType [Expression]* []*
-name = new int();
-name = new int(;
-name = new type();
-name = new int[9];
-name = new int[9
-name = new type[9][8][7];
-name = new type[];
-name = new int[][];
-name = new int[11][5][][];
-
-// Another type of lex error
-$
-
-// UOP -> + | - | !
-name = +9;
-name = -9;
-name = !9;
-
-// ROP -> == | != | <= | >= | < | >
-name = (some == thing);
-name = (some != thing);
-name = (some <= thing);
-name = (some >= thing);
-name = (some < thing);
-name = (some > thing);
-
-// SOP -> + | - | ||
-name = 9 + 9;
-name = 9 - 9;
-name = thing || some;
-
-// POP -> * | / | % | &&
-name = 9*9;
-name = 9/9;
-name = 9%9;
-name = some && thing;
+class name {
+  int iden1;
+  type[][] iden2;
+  iden4(type1 iden1, int iden2){x=5;}
+  rtype4 iden4(type1 iden1, int iden2){x=5;}
+}

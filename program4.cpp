@@ -32,15 +32,20 @@ int main() {
   yyparse();
   
   // Print the Parse Tree
-  cout << endl;
-  for(unsigned int i = 0; i < forest.size(); i++) {
-    forest[i]->printNode();
-    cout << endl << "***" << endl;
-    delete forest[i];
+  if(forest.size() > 0) {
+    cout << endl << "<Program> -> ";
+    for(unsigned int i = 0; i < forest.size(); i++) {
+      cout << "<ClassDec> ";
+    }
+    cout << endl;
+    for(unsigned int i = 0; i < forest.size(); i++) {
+      forest[i]->printNode();
+      cout << endl << "***" << endl;
+      delete forest[i];
+    }
+    cout << endl;
   }
   
-  cout << endl;
-
   delete atts;
   
   return 0 ;

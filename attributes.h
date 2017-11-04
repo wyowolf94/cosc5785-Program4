@@ -11,7 +11,6 @@
 #include<string.h>
 
 #define COMM 1
-#define CLASS 9
 #define WSPC 10
 #define CHRERR 11
 #define WRDERR 12

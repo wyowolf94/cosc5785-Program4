@@ -1,0 +1,108 @@
+classbody : LBRACE vardecstar constdecstar methdecstar RBRACE
+              {$$ = new classbodyNode();
+               $$->addChild($2);
+               $$->addChild($3);
+               $$->addChild($4);
+               delete $1;
+               delete $5;}
+          ;             
+             
+methdecstar : %empty %prec MCSTAR
+                {$$ = new methdecstarNode();}
+            | methdecstar methoddec
+                {$$ = new methdecstarNode();
+                 $1->addChild($2);
+                 $$ = $1;}
+            ;
+ 
+constdecstar : %empty %prec MCSTAR
+                 {$$ = new constdecstarNode();}
+             | constdecstar constdec
+                 {$$ = new constdecstarNode();
+                  $1->addChild($2);
+                  $$ = $1;}
+             ;
+ 
+vardecstar : %empty
+               {$$ = new vardecstarNode();}
+           | vardecstar vardec
+               {$$ = new vardecstarNode();
+                $1->addChild($2);
+                $$ = $1;}
+           ;
+
+// classbodyNode that goes to { vardecs constdecs methdecs }
+class classbodyNode : public Node 
+{
+  public:
+    classbodyNode() : Node () {
+      // All same type
+    } 
+
+    void printClassBody() {
+        cout << "<ClassBody> -> { ";
+        for(unsigned int i = 0; i < children[0]->children.size(); i++) {
+          cout << "<VarDec> ";
+        }
+        for(unsigned int i = 0; i < children[1]->children.size(); i++) {
+          cout << "<ConstDec> ";
+        }
+        for(unsigned int i = 0; i < children[2]->children.size(); i++) {
+          cout << "<MethDec> ";
+        }
+        cout << "}" << endl;
+    }
+    
+    void printChildren(int index) {
+        for(unsigned int i = 0; i < children[index]->children.size(); i++) {
+          children[index]->children[i]->printNode();
+        }
+    }
+    
+    virtual void printNode(ostream * out = 0) {
+      cout << endl;
+      printClassBody();
+      printChildren(0);
+      printChildren(1);
+      printChildren(2);
+    }
+}; 
+
+// methdecstarNode that goes to any number of vardecs
+class methdecstarNode : public Node 
+{
+  public:
+    methdecstarNode() : Node () {
+      // Nada
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      // Don't print anything
+    }
+};
+
+// constdecstarNode that goes to any number of vardecs
+class constdecstarNode : public Node 
+{
+  public:
+    constdecstarNode() : Node () {
+      // Nada
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      // Don't print anything
+    }
+}; 
+
+// vardecstarNode that goes to any number of vardecs
+class vardecstarNode : public Node 
+{
+  public:
+    vardecstarNode() : Node () {
+      // Nada
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      // Don't print anything
+    }
+}; 
