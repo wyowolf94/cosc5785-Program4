@@ -8,7 +8,8 @@ class name {}
 
 class name {
   int iden1;
-  type iden2;
+  type iden2
+  type iden3;
 }
 
 class name {
@@ -18,13 +19,17 @@ class name {
 
 class name {
   rtype1 iden1(){}
-  rtype4 iden4(type1 iden1, int iden2){x=-5;}
+  rtype4 iden4(type1 iden1, int iden2){
+    type x;
+    type y
+    x=-5;
+  }
 }
 
 class name {
   type iden2;
   iden1(){}
-  iden4(type1 iden1, int iden2){x=!5;}
+  iden4(type1 iden1, int iden2){x=!5}
 }
 
 class name {
@@ -35,38 +40,40 @@ class name {
 
 class name {
   iden1(){}
-  iden2(type1 iden1, int iden2){}
+  iden2 [type1 iden1, int iden2){}
   rtype2 iden2(type1 iden1, int iden2){}
   rtype3 iden3(){x=5+6%8;}
   rtype4 iden4(type1 iden1, int iden2){x=5-6*2;}
 }
 
 class name {
-  int iden1;
+  int iden1
   iden3(){this=5;}
   iden4(type1 iden1, int iden2){return;}
-  rtype1 iden1(){}
+  rtype1 iden1({}
   rtype4 iden4(type1 iden1, int iden2){x=5;}
 }
 
 class name {
   int iden1;
   type[][] iden2;
-  iden4(type1 iden1, int iden2){x=5;}
-  rtype4 iden4(type1 iden1, int iden2){x=5;}
+  iden4(type1 iden1, int iden2}{x=5;}
+  void iden4(type1 iden1, int iden2{x=5;}
 }
 
 class iden1 {
   int[] iden2;
   iden2( t1 id1 ) {
     type2 iden3;
-    name (new int[5][9+2][], null, 5+6-9);
+    name (new int[5][9+2][], null, 5+6-9)
+    name (;
     if(read()) return this.iden;
     else {}
   }
   type3 iden4 ( t1 id1, t2 id2, t3 id3) {
     ;
-    while(this.iden1.iden2) print();
+    while(this.iden1.iden2) print(;
+    print()
   }
 }
 
@@ -78,7 +85,41 @@ class iden5 {
   void iden9 () {
     name[4+5] = 3 * 5 + 4;
     while(1) {
+      return
+    }
+  }
+}
+
+class iden6 {
+  int[] iden2;
+  iden2( t1 id1 ) {
+    if(read() return this.iden;
+    else {}
+    if(read() return iden;
+  }
+}
+
+class iden7 {
+  void iden9 () {
+    while(1 {
       return;
     }
+  }
+}
+
+class iden8 {
+  id () { 
+    something = name(;
+    something = name[2;
+    something = read(;
+    something = read);
+    something = (another;
+  }
+}
+
+class iden9 {
+  id () {
+    something = new iden(;
+    something = new int[][;
   }
 }

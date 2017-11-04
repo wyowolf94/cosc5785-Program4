@@ -114,7 +114,7 @@ class errorNode : public Node
     } 
 
     virtual void printNode(ostream * out = 0) {
-      cout << errorRed << " -> *** Error Node ***" << endl;
+      cout << endl << errorRed << " -> *** Error Node ***" << endl;
     }
   private:
     string errorRed;
@@ -232,6 +232,23 @@ class classbodyNode : public Node
     
   private:
     string type;
+}; 
+
+// VarDec Node which just needs to print <VarDec>
+class varDecNode : public Node 
+{
+  public:
+    varDecNode(string i) : Node () {
+      identifier = i;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      cout << endl << "<VarDec> -> <Type> identifier (" 
+           << identifier << ") semi" << endl;
+      children[0]->printNode();
+    }
+  private:
+    string identifier;
 }; 
 
 // Constructor Declaration node that goes to iden ( paramlist ) block
@@ -674,23 +691,6 @@ class nameNode : public Node
   private:
     string type;
     string id;
-}; 
-
-// VarDec Node which just needs to print <VarDec>
-class varDecNode : public Node 
-{
-  public:
-    varDecNode(string i) : Node () {
-      identifier = i;
-    } 
-
-    virtual void printNode(ostream * out = 0) {
-      cout << endl << "<VarDec> -> <Type> identifier (" 
-           << identifier << ") semi" << endl;
-      children[0]->printNode();
-    }
-  private:
-    string identifier;
 }; 
 
 // Type node where t defines either a simpleType or a 

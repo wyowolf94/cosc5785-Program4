@@ -74,13 +74,22 @@ void yyerror(const char *);
 %% 
   
 program : classdec
-            {forest.push_back($1);}
+            {if(!$1->getValid()) {
+               $$->setValid(false);
+             }
+             forest.push_back($1);}
         | program classdec
-            {forest.push_back($2);}
+            {if(!$2->getValid()) {
+               $$->setValid(false);
+             }
+             forest.push_back($2);}
         ;
    
 classdec : CLASS IDEN classbody
              {$$ = new classdecNode($2->value);
+              if(!$3->getValid()) {
+                $$->setValid(false);
+              }
               $$->addChild($3);
               delete $1;
               delete $2;}
@@ -92,39 +101,63 @@ classbody : LBRACE RBRACE
                delete $2;}
           | LBRACE vardecplus RBRACE 
               {$$ = new classbodyNode("vdecs");
+               if(!$2->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($2);
                delete $1;
                delete $3;}
           | LBRACE constdecplus RBRACE 
               {$$ = new classbodyNode("cdecs");
+               if(!$2->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($2);
                delete $1;
                delete $3;}
           | LBRACE methdecplus RBRACE 
               {$$ = new classbodyNode("mdecs");
+               if(!$2->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($2);
                delete $1;
                delete $3;}
           | LBRACE vardecplus constdecplus RBRACE 
               {$$ = new classbodyNode("vcdecs");
+               if(!$2->getValid() || !$3->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($2);
                $$->addChild($3);
                delete $1;
                delete $4;}
           | LBRACE vardecplus methdecplus RBRACE 
               {$$ = new classbodyNode("vmdecs");
+               if(!$2->getValid() || !$3->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($2);
                $$->addChild($3);
                delete $1;
                delete $4;}
           | LBRACE constdecplus methdecplus RBRACE 
               {$$ = new classbodyNode("cmdecs");
+               if(!$2->getValid() || !$3->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($2);
                $$->addChild($3);
                delete $1;
                delete $4;}
           | LBRACE vardecplus constdecplus methdecplus RBRACE 
               {$$ = new classbodyNode("vcmdecs");
+               if(!$2->getValid() || !$3->getValid() || $4->getValid()) {
+                 $$->setValid(false);
+               }
+               if(!$2->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($2);
                $$->addChild($3);
                $$->addChild($4);
@@ -133,40 +166,53 @@ classbody : LBRACE RBRACE
           ;
           
 methdecplus : methoddec 
-                {$$ = new plusstarNode();
+                {if(!$1->getValid()) {
+                   $$->setValid(false);
+                 }
+                 $$ = new plusstarNode();
                  $$->addChild($1);}
             | methdecplus methoddec 
-                {$1->addChild($2);
+                {if(!$2->getValid()) {
+                   $$->setValid(false);
+                 }
+                 $1->addChild($2);
                  $$ = $1;}
             ;
             
 constdecplus : constdec 
-                 {$$ = new plusstarNode();
+                 {if(!$1->getValid()) {
+                    $$->setValid(false);
+                  }
+                  $$ = new plusstarNode();
                   $$->addChild($1);}
              | constdecplus constdec 
-                 {$1->addChild($2);
+                 {if(!$2->getValid()) {
+                    $$->setValid(false);
+                  }
+                  $1->addChild($2);
                   $$ = $1;}
              ;
              
 vardecplus : vardec 
-               {$$ = new plusstarNode();
+               {if(!$1->getValid()) {
+                  $$->setValid(false);
+                }
+                $$ = new plusstarNode();
                 $$->addChild($1);}
            | vardecplus vardec 
-               {$1->addChild($2);
+               {if(!$2->getValid()) {
+                   $$->setValid(false);
+                }
+                $1->addChild($2);
                 $$ = $1;}
            ;
-     
-constdec : IDEN LPAREN paramlist RPAREN block
-             {$$ = new constdecNode($1->value);
-              $$->addChild($3);
-              $$->addChild($5);
-              delete $1;
-              delete $2;
-              delete $4;}
-         ;
+           
      
 methoddec : type IDEN LPAREN paramlist RPAREN block
               {$$ = new methoddecNode("type", $2->value);
+               if(!$6->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($1);
                $$->addChild($4);
                $$->addChild($6);
@@ -175,13 +221,85 @@ methoddec : type IDEN LPAREN paramlist RPAREN block
                delete $5;}
           | VOID IDEN LPAREN paramlist RPAREN block
               {$$ = new methoddecNode("void", $2->value);
+               if(!$6->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($4);
                $$->addChild($6);
                delete $1;
                delete $2;
                delete $3;
                delete $5;}
+          | type IDEN LPAREN paramlist error block 
+              {cerr << endl << "Expected ')' after parameter list: line " 
+                    << $2->lNum << endl << endl;
+               $$ = new errorNode("<MethDec>");
+               $$->addChild($1);
+               $$->addChild($4);
+               $$->addChild($6);
+               $$->setValid(false);
+               delete $2;
+               delete $3;
+               yyerrok;}
+          | VOID IDEN LPAREN paramlist error block 
+              {cerr << endl << "Expected ')' after parameter list: line " 
+                    << $2->lNum << endl << endl;
+               $$ = new errorNode("<MethDec>");
+               $$->addChild($4);
+               $$->addChild($6);
+               $$->setValid(false);
+               delete $1;
+               delete $2;
+               delete $3;
+               yyerrok;}
           ;
+     
+constdec : IDEN LPAREN paramlist RPAREN block
+             {$$ = new constdecNode($1->value);
+              if(!$5->getValid()) {
+                $$->setValid(false);
+              }
+              $$->addChild($3);
+              $$->addChild($5);
+              delete $1;
+              delete $2;
+              delete $4;}
+         | IDEN error paramlist RPAREN block
+             {cerr << endl << "Expected '(' after identifier: line " 
+                   << $1->lNum << endl << endl;
+              $$ = new errorNode("<ConstDec>");
+              $$->addChild($3);
+              $$->addChild($5);
+              $$->setValid(false);
+              delete $1;
+              delete $4;
+              yyerrok;}
+         | IDEN LPAREN paramlist error block
+             {cerr << endl << "Expected ')' after parameter list: line " 
+                   << $1->lNum << endl << endl;
+              $$ = new errorNode("<ConstDec>");
+              $$->addChild($3);
+              $$->addChild($5);
+              $$->setValid(false);
+              delete $1;
+              delete $2;
+              yyerrok;}
+         ;
+          
+vardec : type IDEN SEMI  
+           {$$ = new varDecNode($2->value);
+            $$->addChild($1);
+            delete $2;
+            delete $3;}
+       | type IDEN error 
+           {cerr << endl << "Missing ';' after identifier: line " 
+                 << $2->lNum << endl << endl;
+            $$ = new errorNode("<VarDec>");
+            $$->addChild($1);
+            $$->setValid(false);
+            delete $2;
+            yyerrok;}
+      ;
      
 paramlist : %empty
               {$$ = new paramlistNode("empty");}
@@ -218,7 +336,8 @@ statement : SEMI
                delete $2;
                delete $4;}
           | name EQ exp error
-              {cerr << "Missing ';' after statement: line " << $2->lNum << endl << endl;
+              {cerr << endl << "Missing ';' after statement: line " 
+                    << $2->lNum << endl << endl;
                $$ = new errorNode("<Statement>");
                $$->setValid(false);
                $$->addChild($1);
@@ -232,6 +351,26 @@ statement : SEMI
                delete $2;
                delete $4;
                delete $5;}
+          | name LPAREN arglist RPAREN error 
+              {cerr << endl << "Missing ';' after statement: line " 
+                    << $2->lNum << endl << endl;
+               $$ = new errorNode("<Statement>");
+               $$->setValid(false);
+               $$->addChild($1);
+               $$->addChild($3);
+               delete $2;
+               delete $4;
+               yyerrok;}
+          | name LPAREN arglist error SEMI 
+              {cerr << endl << "Missing ')' after arglist in statement: line " 
+                    << $2->lNum << endl << endl;
+               $$ = new errorNode("<Statement>");
+               $$->setValid(false);
+               $$->addChild($1);
+               $$->addChild($3);
+               delete $2;
+               delete $5;
+               yyerrok;}
           | PRINT LPAREN arglist RPAREN SEMI
               {$$ = new statementNode("printarglist");
                $$->addChild($3);
@@ -239,35 +378,97 @@ statement : SEMI
                delete $2;
                delete $4;
                delete $5;}
+          | PRINT LPAREN arglist RPAREN error 
+              {cerr << endl << "Missing ';' after statement: line " 
+                    << $2->lNum << endl << endl;
+               $$ = new errorNode("<Statement>");
+               $$->setValid(false);
+               $$->addChild($3);
+               delete $1;
+               delete $2;
+               delete $4;
+               yyerrok;}
+          | PRINT LPAREN arglist error SEMI 
+              {cerr << endl << "Missing ')' after arglist in statement: line " 
+                    << $2->lNum << endl << endl;
+               $$ = new errorNode("<Statement>");
+               $$->setValid(false);
+               $$->addChild($3);
+               delete $1;
+               delete $2;
+               delete $5;
+               yyerrok;}
           | condstatement
               {$$ = new statementNode("cond");
+               if(!$1->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($1);}
           | WHILE LPAREN exp RPAREN statement
               {$$ = new statementNode("while");
+               if(!$3->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($3);
                $$->addChild($5);
                delete $1;
                delete $2;
                delete $4;}
+          | WHILE LPAREN exp error statement
+              {cerr << endl << "Missing ')' after while expression in statement: line " 
+                    << $2->lNum << endl << endl;
+               $$ = new errorNode("<Statement>");
+               $$->setValid(false);
+               $$->addChild($3);
+               $$->addChild($5);
+               delete $1;
+               delete $2;}
           | RETURN optexp SEMI
               {$$ = new statementNode("optexp");
                $$->addChild($2);
                delete $1;
                delete $3;}
+          | RETURN optexp error
+              {cerr << endl << "Missing ';' after return statement: line " 
+                    << $1->lNum << endl << endl;
+               $$ = new errorNode("<Statement>");
+               $$->setValid(false);
+               $$->addChild($2);
+               delete $1;}
           | block
               {$$ = new statementNode("block");
+               if(!$1->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($1);}
           ; 
            
 condstatement : IF LPAREN exp RPAREN statement %prec DE
                   {$$ = new condstatementNode("if");
+                   if(!$3->getValid()) {
+                     $$->setValid(false);
+                   }
                    $$->addChild($3);
                    $$->addChild($5);
                    delete $1;
                    delete $2;
                    delete $4;}
+              | IF LPAREN exp error statement %prec DE 
+                  {cerr << endl 
+                        << "Missing ')' after expression in conditional statement: line " 
+                        << $2->lNum << endl << endl;
+                   $$ = new errorNode("<ConditionalStatement>");
+                   $$->setValid(false);
+                   $$->addChild($3);
+                   $$->addChild($5);
+                   delete $1;
+                   delete $2;
+                   yyerrok;} 
               | IF LPAREN exp RPAREN statement ELSE statement 
                   {$$ = new condstatementNode("if-else");
+                   if(!$3->getValid()) {
+                     $$->setValid(false);
+                   }
                    $$->addChild($3);
                    $$->addChild($5);
                    $$->addChild($7);
@@ -275,6 +476,19 @@ condstatement : IF LPAREN exp RPAREN statement %prec DE
                    delete $2;
                    delete $4;
                    delete $6;}
+              | IF LPAREN exp error statement ELSE statement 
+                  {cerr << endl 
+                        << "Missing ')' after expression in conditional statement: line " 
+                        << $2->lNum << endl << endl;
+                   $$ = new errorNode("<ConditionalStatement>");
+                   $$->setValid(false);
+                   $$->addChild($3);
+                   $$->addChild($5);
+                   $$->addChild($7);
+                   delete $1;
+                   delete $2;
+                   delete $6;
+                   yyerrok;}
               ;
            
 block : LBRACE RBRACE
@@ -283,16 +497,25 @@ block : LBRACE RBRACE
            delete $2;}
       | LBRACE locvardecplus RBRACE
           {$$ = new blockNode("locvardecs");
+           if(!$2->getValid()) {
+             $$->setValid(false);
+           }
            $$->addChild($2);
            delete $1;
            delete $3;}
       | LBRACE stateplus RBRACE
           {$$ = new blockNode("statements");
+           if(!$2->getValid()) {
+             $$->setValid(false);
+           }
            $$->addChild($2);
            delete $1;
            delete $3;}
       | LBRACE locvardecplus stateplus RBRACE
           {$$ = new blockNode("both");
+           if(!$2->getValid() || !$3->getValid()) {
+             $$->setValid(false);
+           }
            $$->addChild($2);
            $$->addChild($3);
            delete $1;
@@ -301,17 +524,29 @@ block : LBRACE RBRACE
            
 stateplus : statement
               {$$ = new plusstarNode();
+               if(!$1->getValid()) {
+                 $$->setValid(false);
+               }
                $$->addChild($1);}
           | stateplus statement
-              {$1->addChild($2);
+              {if(!$2->getValid()) {
+                 $$->setValid(false);
+               }
+               $1->addChild($2);
                $$ = $1;}
           ;
            
 locvardecplus : locvardec
                   {$$ = new plusstarNode();
+                   if(!$1->getValid()) {
+                     $$->setValid(false);
+                   }
                    $$->addChild($1);}
               | locvardecplus locvardec
-                  {$1->addChild($2);
+                  {if(!$2->getValid()) {
+                     $$->setValid(false);
+                   }
+                   $1->addChild($2);
                    $$ = $1;}
               ;
            
@@ -320,17 +555,31 @@ locvardec : type IDEN SEMI
                $$->addChild($1);
                delete $2;
                delete $3;}
+          | type IDEN error 
+              {cerr << endl << "Missing ';' after local variable identifier: line " 
+                    << $2->lNum << endl << endl;
+               $$ = new errorNode("<LocalVarDec>");
+               $$->addChild($1);
+               $$->setValid(false);
+               delete $2;
+               yyerrok;}
           ;
            
 optexp : %empty
            {$$ = new optexpNode("empty");}
        | exp
            {$$ = new optexpNode("exp");
+            if(!$1->getValid()) {
+              $$->setValid(false);
+            }
             $$->addChild($1);}
        ;
            
 exp : name 
         {$$ = new expNode("name");
+         if(!$1->getValid()) {
+           $$->setValid(false);
+         }
          $$->addChild($1);}
     | NUM
         {$$ = new expNode("num", $1->value);
@@ -340,11 +589,15 @@ exp : name
          delete $1;}
     | name LPAREN RPAREN
         {$$ = new expNode("name paren");
+         if(!$1->getValid()) {
+           $$->setValid(false);
+         }
          $$->addChild($1);
          delete $2;
          delete $3;}
     | name LPAREN error
-        {cerr << "Missing ')' after name declaration: line " << $2->lNum << endl << endl;
+        {cerr << endl << "Missing ')' after name declaration: line " 
+              << $2->lNum << endl << endl;
          $$ = new errorNode("<Expression>");
          $$->setValid(false);
          $$->addChild($1);
@@ -356,14 +609,14 @@ exp : name
          delete $2;
          delete $3;}
     | READ LPAREN error
-        {cerr << "Missing ')' after read: line " << $1->lNum << endl << endl;
+        {cerr << endl << "Missing ')' after read: line " << $1->lNum << endl << endl;
          $$ = new errorNode("<Expression>");
          $$->setValid(false);
          delete $1;
          delete $2;
          yyerrok;}
     | READ error RPAREN
-        {cerr << "Missing '(' after read: line " << $1->lNum << endl << endl;
+        {cerr << endl << "Missing '(' after read: line " << $1->lNum << endl << endl;
          $$ = new errorNode("<Expression>");
          $$->setValid(false);
          delete $1;
@@ -400,7 +653,7 @@ exp : name
          delete $1;
          delete $3;}
     | LPAREN exp error 
-        {cerr << "Missing ')' after expression: line " << $1->lNum << endl << endl;
+        {cerr << endl << "Missing ')' after expression: line " << $1->lNum << endl << endl;
          $$ = new errorNode("<Expression>");
          $$->addChild($2);
          $$->setValid(false);
@@ -416,7 +669,8 @@ newexp : NEW IDEN LPAREN arglist RPAREN
             delete $3;
             delete $5;}
        | NEW IDEN LPAREN arglist error 
-           {cerr << "Missing ')' after type: line " << $1->lNum << endl << endl;
+           {cerr << endl << "Missing ')' after arglist for new expression: line " 
+                 << $1->lNum << endl << endl;
             $$ = new errorNode("<NewExpression>");
             $$->addChild($4);
             $$->setValid(false);
@@ -451,7 +705,8 @@ expstar : %empty
              delete $2;
              delete $4;}
         | expstar LBRACK exp error
-            {cerr << "Missing ']' after expression: line " << $2->lNum << endl << endl;
+            {cerr << endl << "Missing ']' after new expression: line " 
+                  << $2->lNum << endl << endl;
              $$ = new errorNode("<expstar>");
              $1->addChild($3);
              $$->setValid(false);
@@ -496,7 +751,8 @@ name : THIS
           delete $2;
           delete $4;}
      | name LBRACK exp error
-         {cerr << "Missing ']' after name: line " << $2->lNum << endl << endl;
+         {cerr << endl << "Missing ']' after name: line " 
+               << $2->lNum << endl << endl;
           $$ = new errorNode("<Name>");
           $$->setValid(false);
           $$->addChild($1);
@@ -504,19 +760,6 @@ name : THIS
           delete $2;
           yyerrok;}        
      ;
-     
-vardec : type IDEN SEMI  {$$ = new varDecNode($2->value);
-                          $$->addChild($1);
-                          delete $2;
-                          delete $3;}
-       | type IDEN error {cerr << "Missing ';' after identifier: line " 
-                               << $2->lNum << endl << endl;
-                          $$ = new errorNode("<VarDeclaration>");
-                          $$->addChild($1);
-                          $$->setValid(false);
-                          delete $2;
-                          yyerrok;}
-       ;
      
 type : simpleType 
          {$$ = new typeNode("simpleType");
