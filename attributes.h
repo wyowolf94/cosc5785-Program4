@@ -11,8 +11,6 @@
 #include<string.h>
 
 #define COMM 1
-#define DSLASH 6
-#define VOID 9
 #define CLASS 9
 #define WSPC 10
 #define CHRERR 11

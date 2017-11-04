@@ -1,0 +1,9 @@
+explist : exp 
+            {$$ = new explistNode("exp");
+             $$->addChild($1);} 
+        | explist COMMA exp 
+            {$$ = new explistNode("rec");
+             $$->addChild($1);
+             $$->addChild($3);
+             delete $2;}
+        ;

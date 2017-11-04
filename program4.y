@@ -36,8 +36,10 @@ void yyerror(const char *);
 }
 // Bison Declarations
 
-%type<ttype> statement optexp
 %type<ttype> elem 
+%type<ttype> param paramstar paramlist
+%type<ttype> resulttype methoddec constdec
+%type<ttype> statement optexp
 %type<ttype> simpleType type varDec 
 %type<ttype> condstatement
 %type<ttype> locvardec block stateplus locvardecplus
@@ -57,6 +59,7 @@ void yyerror(const char *);
 %token<atts> MULT DIVD MOD AND
 %token<atts> BANG
 %token<atts> SEMI EQ COMMA RETURN WHILE PRINT
+%token<atts> VOID
 
 %left DEQ NEQ LEQ GEQ GT LT RO
 %left PLUS MINUS OR SO
@@ -65,6 +68,13 @@ void yyerror(const char *);
 %precedence UO
 %precedence DE
 %precedence ELSE
+//%precedence PRMTR
+//%precedence SEMI
+%precedence RT
+%precedence IDEN
+%precedence NM
+%precedence LPAREN
+
 
 %% 
 
@@ -77,8 +87,60 @@ start : %empty {}
 
 elem : statement {}
      | varDec {}
+     | methoddec {}
+     | constdec {}
      ;
-
+     
+constdec : IDEN LPAREN paramlist RPAREN block
+             {$$ = new constdecNode($1->value);
+              $$->addChild($3);
+              $$->addChild($5);
+              delete $1;
+              delete $2;
+              delete $4;}
+         ;
+     
+methoddec : resulttype IDEN LPAREN paramlist RPAREN block
+              {$$ = new methoddecNode($2->value);
+               $$->addChild($1);
+               $$->addChild($4);
+               $$->addChild($6);
+               delete $2;
+               delete $3;
+               delete $5;}
+          ;
+     
+resulttype : type %prec RT
+               {$$ = new resulttypeNode("type");
+                $$->addChild($1);}
+           | VOID
+               {$$ = new resulttypeNode("void");
+                delete $1;}
+           ;
+     
+paramlist : %empty
+              {$$ = new paramlistNode("empty");}
+          | paramstar
+              {$$ = new paramlistNode("rec");
+               $$->addChild($1);}
+          ;
+     
+paramstar : param 
+              {$$ = new paramstarNode();
+               $$->addChild($1);}
+          | paramstar COMMA param
+              {$$ = new paramstarNode();
+               $1->addChild($3);
+               $$ = $1;
+               delete $2;}
+          ;
+     
+param : type IDEN //%prec PRMTR
+          {$$ = new paramNode($2->value);
+           $$->addChild($1);
+           delete $2;}
+      ;
+     
 statement : SEMI
               {$$ = new statementNode("semi");
                delete $1;}
@@ -297,6 +359,7 @@ newexp : NEW IDEN LPAREN arglist RPAREN
             $$->addChild($4);
             $$->setValid(false);
             delete $1;
+            delete $2;
             delete $3;
             yyerrok;}
        | NEW simpleType expstar brackstar
@@ -330,11 +393,11 @@ expstar : %empty
         | expstar LBRACK exp error
             {cerr << "Missing ']' after expression: line " << $2->lNum << endl << endl;
              $$ = new errorNode("<expstar>");
-             $$->addChild($1);
-             $$->addChild($3);
+             $1->addChild($3);
              $$->setValid(false);
              $1->setValid(false);
              $3->setValid(false);
+             $$ = $1;
              delete $2;
              yyerrok;}
         ;
@@ -347,30 +410,30 @@ arglist : %empty
         ;
   
 explist : exp 
-            {$$ = new explistNode("exp");
+            {$$ = new explistNode();
              $$->addChild($1);} 
         | explist COMMA exp 
-            {$$ = new explistNode("rec");
-             $$->addChild($1);
-             $$->addChild($3);
+            {$$ = new explistNode();
+             $1->addChild($3);
+             $$ = $1;
              delete $2;}
         ;
   
 name : THIS  
          {$$ = new nameNode("this", "");
           delete $1;}
-     | IDEN 
+     | IDEN %prec NM
          {$$ = new nameNode("id", $1->value);
           delete $1;}
      | name DOT IDEN 
          {$$ = new nameNode("dotid", $3->value);
-          $$->addChild($1);
+          $$->addChild($1);;
           delete $2;
           delete $3;} 
      | name LBRACK exp RBRACK 
          {$$ = new nameNode("exp", "");
-          $$->addChild($1);
-          $$->addChild($3);
+          $1->addChild($3);
+          $$ = $1;
           delete $2;
           delete $4;}
      | name LBRACK exp error
@@ -387,7 +450,8 @@ varDec : type IDEN SEMI  {$$ = new varDecNode($2->value);
                           $$->addChild($1);
                           delete $2;
                           delete $3;}
-       | type IDEN error {cerr << "Missing ';' after identifier: line " << $2->lNum << endl << endl;
+       | type IDEN error {cerr << "Missing ';' after identifier: line " 
+                               << $2->lNum << endl << endl;
                           $$ = new errorNode("<VarDeclaration>");
                           $$->addChild($1);
                           $$->setValid(false);

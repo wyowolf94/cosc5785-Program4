@@ -137,6 +137,130 @@ class errorNode : public Node
     string errorRed;
 }; 
 
+// Constructor Declaration node that goes to iden ( paramlist ) block
+class constdecNode : public Node 
+{
+  public:
+    constdecNode(string i) : Node () {
+      id = i;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      cout << endl << "<ConstructorDeclaration> -> identifier (" << id
+           << ") ( <ParameterList> ) <Block>" << endl;
+      children[0]->printNode();
+      children[1]->printNode();
+    }
+  private:
+    string id;
+}; 
+
+// Method Declaration node that goes to resulttype iden ( paramlist ) block
+class methoddecNode : public Node 
+{
+  public:
+    methoddecNode(string i) : Node () {
+      id = i;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      cout << "<MethodDeclaration> -> <ResultType> identifier (" << id
+           << ") ( <ParameterList> ) <Block>" << endl;
+      children[0]->printNode();
+      children[1]->printNode();
+      children[2]->printNode();
+    }
+  private:
+    string id;
+}; 
+
+// resulttype node that goes to typeNode or token void
+class resulttypeNode : public Node 
+{
+  public:
+    resulttypeNode(string t) : Node () {
+      type = t;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      if(type == "type") {
+        cout << "<ResultType> -> <Type>" << endl;
+        children[0]->printNode();
+      } else if(type == "void") {
+        cout << "<ResultType> -> void" << endl;
+      } else {
+        cout << "resulttype problem" << endl;
+      }
+    }
+  private:
+    string type;
+};
+
+// paramlistNode that goes to empty or a paramstarNode
+class paramlistNode : public Node 
+{
+  public:
+    paramlistNode(string t) : Node () {
+      type = t;
+    } 
+
+    void printParamList() {
+        cout << "<ParameterList> -> ";
+        for(unsigned int i = 0; i < children[0]->children.size() - 1; i++) {
+          cout << "<Parameter> , ";
+        }
+        cout << "<Parameter>" << endl;
+    }
+    
+    void printChildren() {
+        for(unsigned int i = 0; i < children[0]->children.size(); i++) {
+          children[0]->children[i]->printNode();
+        }
+    }
+    
+    virtual void printNode(ostream * out = 0) {
+      if(type == "empty") {
+        cout << "<ParameterList> -> epsilon" << endl;
+      } else if (type == "rec") {
+        printParamList();
+        printChildren();
+      } else {
+        cout << "paramlist problem" << endl;
+      }
+    }
+  private:
+    string type;
+}; 
+
+// paramstarNode that goes to one or more comma separated parameters
+class paramstarNode : public Node 
+{
+  public:
+    paramstarNode() : Node () {
+      // Nada
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      // Don't print anything
+    }
+}; 
+
+// param node which just goes to a type identifier
+class paramNode : public Node 
+{
+  public:
+    paramNode(string i) : Node () {
+      id = i;
+    } 
+
+    virtual void printNode(ostream * out = 0) {
+      cout << endl << "<Parameter> -> <Type> identifier (" << id << ")" << endl;
+      children[0]->printNode();
+    }
+  private:
+    string id;
+}; 
+
 // Statement Node ... for now just a simple statement
 class statementNode : public Node 
 {
@@ -174,7 +298,7 @@ class statementNode : public Node
         cout << "<Statement> -> <Block>" << endl;
         children[0]->printNode();
       } else {
-        cout << endl << "oh no good lord hey kids" << endl;
+        cout << endl << "statement problem" << endl;
       }
     }
   private:
@@ -200,6 +324,8 @@ class condstatementNode : public Node
         children[0]->printNode();
         children[1]->printNode();
         children[2]->printNode();
+      } else {
+        cout << "conditional statement problem" << endl;
       }
     }
   private:
@@ -240,6 +366,7 @@ class blockNode : public Node
     }
 
     virtual void printNode(ostream * out = 0) {
+      cout << endl;
       if(type == "empty") {
         cout << "<Block> -> { }" << endl;
       } else if (type == "locvardecs") {
@@ -253,7 +380,7 @@ class blockNode : public Node
         printChildren(0);
         printChildren(1);
       } else {
-        cout << "it's going to work out" << endl;
+        cout << "block problem" << endl;
       }
     }
   private:
@@ -323,7 +450,7 @@ class optexpNode : public Node
         cout << "<OptionalExpression> -> <Expression>" << endl;
         children[0]->printNode();
       } else {
-        cout << "so tired. need to finish this. " << endl;
+        cout << "optional expression problem" << endl;
       }
     }
   private:
@@ -378,7 +505,7 @@ class expNode : public Node
       } else if (expType == "num") {
         cout << "<Expression> -> Number (" << num << ")" << endl;
       }  else {
-        cout << "Something really bad happened :'(" << endl;
+        cout << "expression problem" << endl;
       }
     }
   private:
@@ -431,7 +558,7 @@ class newexpNode : public Node
         printChildren(1);
         printChildren(2);
       } else {
-        cout << "oh my god holy hell what is happening" << endl;
+        cout << "new expression problem" << endl;
       }
     }
   private:
@@ -477,14 +604,28 @@ class arglistNode : public Node
       type = t;
     } 
 
+    void printArgList() {
+        cout << "<ArgList> -> ";
+        for(unsigned int i = 0; i < children[0]->children.size() - 1; i++) {
+          cout << "<Expression> , ";
+        }
+        cout << "<Expression>" << endl;
+    }
+    
+    void printChildren() {
+        for(unsigned int i = 0; i < children[0]->children.size(); i++) {
+          children[0]->children[i]->printNode();
+        }
+    }
+    
     virtual void printNode(ostream * out = 0) {
       if(type == "empty") {
         cout << "<ArgList> -> epsilon" << endl;
       } else if (type == "rec") {
-        cout << "<ArgList> -> <explist>" << endl;
-        children[0]->printNode();
+        printArgList();
+        printChildren();
       } else {
-        cout << "some problem message" << endl;
+        cout << "arglist problem" << endl;
       }
     }
   private:
@@ -495,21 +636,12 @@ class arglistNode : public Node
 class explistNode : public Node 
 {
   public:
-    explistNode(string t) : Node () {
-      type = t;
+    explistNode() : Node () {
+      type = "";
     } 
-
+    
     virtual void printNode(ostream * out = 0) {
-      if(type == "exp") {
-        cout << "<explist> -> <Expression>" << endl;
-        children[0]->printNode();
-      } else if (type == "rec") {
-        cout << "<explist> -> <explist> , <Expression>" << endl;
-        children[0]->printNode();
-        children[1]->printNode();
-      } else {
-        cout << "trouble" << endl;
-      }
+      // Don't print anything
     }
   private:
     string type;
@@ -538,7 +670,7 @@ class nameNode : public Node
         children[0]->printNode();
         children[1]->printNode();
       } else {
-        cout << "Bad news bears" << endl;
+        cout << "name problem" << endl;
       }
     }
   private:
@@ -581,7 +713,7 @@ class typeNode : public Node
         cout << "<Type> []" << endl;
         children[0]->printNode();
       } else {
-        cout << "This was unexpected" << endl;
+        cout << "type problem" << endl;
       }
     }
   private:
@@ -603,7 +735,7 @@ class simpleTypeNode : public Node
       } else if (type == "id") {
         cout << "<SimpleType> -> identifier (" << id << ")" << endl;
       } else {
-        cout << "This is bad" << endl;
+        cout << "simpleType problem" << endl;
       }
     }
   private:
